@@ -1,10 +1,11 @@
 package com.finolo.service.auth;
 
-import com.finolo.dto.auth.RegisterRequest;
-import com.finolo.dto.auth.LoginRequest;
 import com.finolo.dto.auth.AuthResponse;
+import com.finolo.dto.auth.LoginRequest;
+import com.finolo.dto.auth.RegisterRequest;
 import com.finolo.model.User;
 import com.finolo.repository.UserRepository;
+import com.finolo.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -32,10 +34,12 @@ public class AuthService {
 
         userRepository.save(user);
 
+        String token = jwtService.generateToken(user.getUsername());
+
         return AuthResponse.builder()
                 .email(user.getEmail())
                 .role(user.getRole())
-                .token("JWT_TOKEN_GELECEK") // Geçici token
+                .token(token) // Geçici token
                 .build();
     }
 
@@ -50,10 +54,12 @@ public class AuthService {
             throw new RuntimeException("Şifre hatalı");
         }
 
+        String token = jwtService.generateToken(user.getUsername());
+
         return AuthResponse.builder()
                 .email(user.getEmail())
                 .role(user.getRole())
-                .token("JWT_TOKEN_GELECEK") // Geçici token
+                .token(token)
                 .build();
     }
 }
