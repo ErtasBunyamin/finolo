@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
 import {getDashboardSummary, getMonthlyStats, getRecentInvoices} from "../services/dashboardService";
+import DashboardCard from "../components/DashboardCard";
+import MonthlyBarChart from "../components/MonthlyBarChart";
+import {FiClock, FiDollarSign, FiFileText, FiUser} from "react-icons/fi";
 
 function Dashboard() {
     const [summary, setSummary] = useState(null);
@@ -40,36 +42,17 @@ function Dashboard() {
             {/* Özet Kartlar */}
             {summary && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-                    {[
-                        { label: "Toplam Fatura", value: summary.totalInvoices },
-                        { label: "Toplam Müşteri", value: summary.totalCustomers },
-                        { label: "Toplam Gelir", value: `${summary.totalRevenue.toFixed(2)} ₺` },
-                        { label: "Bekleyen Ödeme", value: summary.unpaidInvoices },
-                    ].map((item, i) => (
-                        <div key={i} className="bg-white p-4 rounded shadow">
-                            <p className="text-sm text-gray-500">{item.label}</p>
-                            <p className="text-xl font-semibold">{item.value}</p>
-                        </div>
-                    ))}
+                    <DashboardCard icon={FiFileText} label="Toplam Fatura" value={summary.totalInvoices} />
+                    <DashboardCard icon={FiUser} label="Toplam Müşteri" value={summary.totalCustomers} />
+                    <DashboardCard icon={FiDollarSign} label="Toplam Gelir" value={`${summary.totalRevenue.toFixed(2)} ₺`} />
+                    <DashboardCard icon={FiClock} label="Bekleyen Ödeme" value={summary.unpaidInvoices} />
                 </div>
             )}
 
             {/* Aylık Grafik */}
             <div className="bg-white p-4 rounded shadow mt-8">
                 <h2 className="text-lg font-semibold mb-4 text-indigo-600">Aylık Fatura Gelirleri</h2>
-                {monthlyStats.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={300}>
-                        <BarChart data={monthlyStats}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="month" />
-                            <YAxis />
-                            <Tooltip />
-                            <Bar dataKey="amount" fill="#6366F1" />
-                        </BarChart>
-                    </ResponsiveContainer>
-                ) : (
-                    <p className="text-gray-500">Gösterilecek veri yok.</p>
-                )}
+                <MonthlyBarChart data={monthlyStats} />
             </div>
 
             {/* Son 5 Fatura */}
