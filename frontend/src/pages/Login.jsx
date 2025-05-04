@@ -1,8 +1,8 @@
 import {useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
-import api from "../services/api";
-import finoloLogo from "../assets/finolo-logo.png"; // logoyu assets klasörüne koyduğunu varsayıyoruz
+import {loginRequest} from "../services/authService";
+import finoloLogo from "../assets/finolo-logo.png";
 
 function Login() {
     const { login } = useAuth();
@@ -20,8 +20,8 @@ function Login() {
         setError("");
 
         try {
-            const res = await api.post("/auth/login", form);
-            login(res.data, res.data.token);
+            const data = await loginRequest(form);
+            login(data, data.token);
             navigate("/dashboard");
         } catch (err) {
             setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");

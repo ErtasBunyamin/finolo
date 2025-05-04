@@ -6,6 +6,7 @@ import Customers from "./pages/Customers";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
 import Layout from "./layout/Layout";
+import CustomerForm from "./pages/CustomerForm.jsx";
 
 function App() {
     return (
@@ -20,6 +21,7 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/customers/new" element={<CustomerForm />} />
                 </Route>
             </Routes>
         </Router>
