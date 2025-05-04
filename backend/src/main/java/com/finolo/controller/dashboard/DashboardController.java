@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/dashboard")
@@ -30,4 +31,11 @@ public class DashboardController {
         var list = dashboardService.getRecentInvoices();
         return ResponseEntity.ok(BaseResponse.success(list, "Son faturalar getirildi"));
     }
+
+    @GetMapping("/monthly-stats")
+    public ResponseEntity<BaseResponse<Map<String, Double>>> getMonthlyStats() {
+        Map<String, Double> stats = dashboardService.getMonthlyInvoiceTotals();
+        return ResponseEntity.ok(BaseResponse.success(stats, "Aylık gelir verisi getirildi"));
+    }
+
 }

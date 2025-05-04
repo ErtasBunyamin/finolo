@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,8 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("SELECT SUM(i.amount) FROM Invoice i WHERE i.user = :user")
     Optional<Double> sumAmountByUser(@Param("user") User user);
     List<Invoice> findTop5ByUserOrderByDateDesc(User user);
+    List<Invoice> findByUserAndDateAfter(User user, LocalDate date);
+
 
 
 }

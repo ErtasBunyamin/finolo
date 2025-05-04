@@ -11,7 +11,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +48,21 @@ public class DashboardService {
         return invoices.stream()
                 .map(invoiceMapper::toResponse)
                 .toList();
+    }
+
+    public Map<String, Double> getMonthlyInvoiceTotals() {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<Invoice> invoices = invoiceRepository.findByUserAndDateAfter(
+                currentUser, LocalDate.now().minusMonths(6)
+        );
+
+        return invoices.stream()
+                .collect(Collectors.groupingBy(
+                        inv -> inv.getDate().getMonth().toString(),
+                        TreeMap::new,
+                        Collectors.summingDouble(Invoice::getAmount)
+                ));
     }
 
 }

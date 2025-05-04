@@ -1,22 +1,29 @@
 import React, {useEffect, useState} from "react";
-import {getDashboardSummary, getRecentInvoices} from "../services/dashboardService";
+import {Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {getDashboardSummary, getMonthlyStats, getRecentInvoices} from "../services/dashboardService";
 
 function Dashboard() {
     const [summary, setSummary] = useState(null);
     const [recentInvoices, setRecentInvoices] = useState([]);
+    const [monthlyStats, setMonthlyStats] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const summaryData = await getDashboardSummary();
-                if (summaryData.success) {
-                    setSummary(summaryData.data);
-                }
+                if (summaryData.success) setSummary(summaryData.data);
 
                 const recentData = await getRecentInvoices();
-                if (recentData.success) {
-                    setRecentInvoices(recentData.data);
+                if (recentData.success) setRecentInvoices(recentData.data);
+
+                const statsData = await getMonthlyStats();
+                if (statsData.success) {
+                    const chartData = Object.entries(statsData.data).map(([month, amount]) => ({
+                        month: month.charAt(0) + month.slice(1).toLowerCase(), // Ocak, Şubat vs için düzeltme
+                        amount,
+                    }));
+                    setMonthlyStats(chartData);
                 }
             } catch (err) {
                 setError("Dashboard verileri alınamadı.");
@@ -46,6 +53,24 @@ function Dashboard() {
                     ))}
                 </div>
             )}
+
+            {/* Aylık Grafik */}
+            <div className="bg-white p-4 rounded shadow mt-8">
+                <h2 className="text-lg font-semibold mb-4 text-indigo-600">Aylık Fatura Gelirleri</h2>
+                {monthlyStats.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={300}>
+                        <BarChart data={monthlyStats}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="month" />
+                            <YAxis />
+                            <Tooltip />
+                            <Bar dataKey="amount" fill="#6366F1" />
+                        </BarChart>
+                    </ResponsiveContainer>
+                ) : (
+                    <p className="text-gray-500">Gösterilecek veri yok.</p>
+                )}
+            </div>
 
             {/* Son 5 Fatura */}
             <div className="bg-white p-4 rounded shadow">
@@ -77,6 +102,7 @@ function Dashboard() {
                     <p className="text-gray-500">Kayıtlı fatura bulunamadı.</p>
                 )}
             </div>
+
 
             {error && <p className="text-red-500 mt-4">{error}</p>}
         </div>
