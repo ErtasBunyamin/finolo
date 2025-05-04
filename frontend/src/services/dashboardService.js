@@ -1,6 +1,11 @@
 import api from "./api";
 
-export const getDashboardSummary =  async () => {
+export const getDashboardSummary = async () => {
     const res = await api.get("/dashboard/summary");
+    return res.data;
+};
+
+export const getRecentInvoices = async () => {
+    const res = await api.get("/dashboard/recent");
     return res.data;
 };

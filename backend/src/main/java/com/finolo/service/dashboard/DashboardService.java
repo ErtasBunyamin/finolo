@@ -1,6 +1,9 @@
 package com.finolo.service.dashboard;
 
 import com.finolo.dto.dashboard.DashboardSummaryResponse;
+import com.finolo.dto.invoice.InvoiceResponse;
+import com.finolo.mapper.InvoiceMapper;
+import com.finolo.model.Invoice;
 import com.finolo.model.User;
 import com.finolo.repository.CustomerRepository;
 import com.finolo.repository.InvoiceRepository;
@@ -8,12 +11,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class DashboardService {
 
     private final InvoiceRepository invoiceRepository;
     private final CustomerRepository customerRepository;
+    private final InvoiceMapper invoiceMapper;
+
 
     public DashboardSummaryResponse getSummary() {
         User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -30,4 +37,13 @@ public class DashboardService {
                 .unpaidInvoices(unpaidInvoices)
                 .build();
     }
+
+    public List<InvoiceResponse> getRecentInvoices() {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Invoice> invoices = invoiceRepository.findTop5ByUserOrderByDateDesc(currentUser);
+        return invoices.stream()
+                .map(invoiceMapper::toResponse)
+                .toList();
+    }
+
 }
