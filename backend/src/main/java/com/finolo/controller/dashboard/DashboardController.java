@@ -38,4 +38,11 @@ public class DashboardController {
         return ResponseEntity.ok(BaseResponse.success(stats, "Aylık gelir verisi getirildi"));
     }
 
+    @GetMapping("/payment-stats")
+    public ResponseEntity<BaseResponse<Map<String, Long>>> getPaymentStats() {
+        var stats = dashboardService.getPaymentStats();
+        return ResponseEntity.ok(BaseResponse.success(stats, "Tahsilat durumu getirildi"));
+    }
+
+
 }

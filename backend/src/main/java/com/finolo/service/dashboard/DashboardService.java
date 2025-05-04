@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -64,5 +65,24 @@ public class DashboardService {
                         Collectors.summingDouble(Invoice::getAmount)
                 ));
     }
+
+    public Map<String, Long> getPaymentStats() {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<Invoice> invoices = invoiceRepository.findByUser(currentUser);
+
+        long paid = invoices.stream()
+                .filter(inv -> "PAID".equalsIgnoreCase(inv.getStatus()))
+                .count();
+
+        long unpaid = invoices.size() - paid;
+
+        Map<String, Long> stats = new LinkedHashMap<>();
+        stats.put("Ödenmiş", paid);
+        stats.put("Ödenmemiş", unpaid);
+
+        return stats;
+    }
+
 
 }
