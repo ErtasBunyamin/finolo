@@ -19,7 +19,7 @@ public class InvoiceResponse {
     private String description;
     private Long customerId;
 
-    // ✅ Yeni alanlar:
+    private String customerName;
     private String invoiceNumber;
     private String status;
     private LocalDate dueDate;

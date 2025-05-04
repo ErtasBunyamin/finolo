@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {getInvoices} from "../services/invoiceService";
+import {Plus} from "lucide-react";
 
 function Invoices() {
     const [invoices, setInvoices] = useState([]);
@@ -54,7 +55,7 @@ function Invoices() {
                             >
                                 <td className="px-6 py-3">#{invoice.id}</td>
                                 <td className="px-6 py-3">
-                                    {invoice.customerId}
+                                    {invoice.customerName}
                                 </td>
                                 <td className="px-6 py-3">{invoice.amount} ₺</td>
                                 <td className="px-6 py-3">
@@ -73,6 +74,14 @@ function Invoices() {
                     </tbody>
                 </table>
             </div>
+            {/* FAB Butonu */}
+            <button
+                onClick={() => navigate("/invoices/new")}
+                className="fixed bottom-6 right-6 w-14 h-14 bg-indigo-600 text-white rounded-full shadow-xl flex items-center justify-center hover:bg-indigo-700 transition z-50"
+                aria-label="Fatura Oluştur"
+            >
+                <Plus size={28} strokeWidth={2.5} />
+            </button>
         </div>
     );
 }
