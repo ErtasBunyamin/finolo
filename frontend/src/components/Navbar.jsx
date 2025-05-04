@@ -70,7 +70,8 @@ function Navbar() {
         <nav className="flex flex-col gap-4 text-lg text-gray-700">
           <NavLink to="/dashboard" className={linkClasses}>Dashboard</NavLink>
           <NavLink to="/customers" className={linkClasses}>Müşteriler</NavLink>
-          <NavLink to="/profile" className={linkClasses}>Profil</NavLink>
+            <NavLink to="/invoices" className={linkClasses}>Faturalar</NavLink>
+            <NavLink to="/profile" className={linkClasses}>Profil</NavLink>
         </nav>
 
         <div className="mt-auto pt-6 border-t text-sm text-gray-600">

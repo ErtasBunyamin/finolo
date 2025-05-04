@@ -7,6 +7,8 @@ import Profile from "./pages/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
 import Layout from "./components/Layout.jsx";
 import CustomerForm from "./pages/CustomerForm.jsx";
+import Invoices from "./pages/Invoices.jsx";
+import InvoiceForm from "./pages/InvoiceForm.jsx";
 
 function App() {
     return (
@@ -56,6 +58,27 @@ function App() {
                         <PrivateRoute>
                             <Layout>
                                 <Profile />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+                <Route
+                    path="/invoices"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <Invoices />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/invoices/new"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <InvoiceForm />
                             </Layout>
                         </PrivateRoute>
                     }

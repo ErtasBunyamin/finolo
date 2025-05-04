@@ -1,28 +1,41 @@
-import {useAuth} from "../context/AuthContext.jsx";
-import {useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
+import {getInvoices} from "../services/invoiceService";
 
 function Dashboard() {
-    const { user, logout } = useAuth();
-    const navigate = useNavigate();
+    const [invoices, setInvoices] = useState([]);
 
-    const handleLogout = () => {
-        logout();
-        navigate("/");
-    };
+    useEffect(() => {
+        async function fetch() {
+            const data = await getInvoices();
+            setInvoices(data);
+        }
+        fetch();
+    }, []);
+
+    const totalAmount = invoices.reduce((sum, i) => sum + parseFloat(i.amount || 0), 0);
+    const lastInvoice = invoices[invoices.length - 1];
 
     return (
-        <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center px-4">
-            <h1 className="text-4xl font-bold text-indigo-700 mb-4">Finolo Paneline Hoş Geldiniz 🎉</h1>
-            <p className="text-gray-600 text-lg mb-6">
-                {user?.email} olarak giriş yaptınız.
-            </p>
+        <div className="p-4 space-y-6">
+            <h2 className="text-2xl font-bold text-indigo-600">Genel Bakış</h2>
 
-            <button
-                onClick={handleLogout}
-                className="px-6 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition"
-            >
-                Çıkış Yap
-            </button>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="p-4 bg-white rounded shadow border-l-4 border-indigo-600">
+                    <h3 className="text-lg font-semibold">Toplam Fatura</h3>
+                    <p className="text-2xl font-bold">{invoices.length} adet</p>
+                </div>
+
+                <div className="p-4 bg-white rounded shadow border-l-4 border-green-500">
+                    <h3 className="text-lg font-semibold">Toplam Tutar</h3>
+                    <p className="text-2xl font-bold">₺{totalAmount.toFixed(2)}</p>
+                </div>
+
+                <div className="p-4 bg-white rounded shadow border-l-4 border-yellow-500">
+                    <h3 className="text-lg font-semibold">Son Fatura</h3>
+                    <p>{lastInvoice?.title || "Yok"}</p>
+                    <p className="text-sm text-gray-500">{lastInvoice?.date}</p>
+                </div>
+            </div>
         </div>
     );
 }
