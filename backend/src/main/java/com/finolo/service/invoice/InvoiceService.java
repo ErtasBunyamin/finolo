@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class InvoiceService {
                 .orElseThrow(() -> new RuntimeException("Müşteri bulunamadı"));
 
         String invoiceNumber = "INV-" + System.currentTimeMillis();
-        Double taxRate = request.getTaxRate() != null ? request.getTaxRate() : 0.0;
+        double taxRate = request.getTaxRate() != null ? request.getTaxRate() : 0.0;
         Double totalWithTax = request.getAmount() * (1 + (taxRate / 100.0));
 
         Invoice invoice = Invoice.builder()
@@ -90,4 +91,18 @@ public class InvoiceService {
                         .build())
                 .toList();
     }
+
+    public void deleteInvoice(Long id) throws AccessDeniedException {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fatura bulunamadı"));
+
+        if (!invoice.getUser().getId().equals(currentUser.getId())) {
+            throw new AccessDeniedException("Bu faturayı silme yetkiniz yok.");
+        }
+
+        invoiceRepository.delete(invoice);
+    }
+
 }
