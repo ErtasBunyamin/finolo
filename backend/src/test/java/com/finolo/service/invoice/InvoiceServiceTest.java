@@ -1,8 +1,8 @@
 package com.finolo.service.invoice;
 
 import com.finolo.dto.invoice.InvoiceRequest;
+import com.finolo.dto.invoice.InvoiceResponse;
 import com.finolo.model.Customer;
-import com.finolo.model.Invoice;
 import com.finolo.model.User;
 import com.finolo.repository.CustomerRepository;
 import com.finolo.repository.InvoiceRepository;
@@ -11,20 +11,18 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 class InvoiceServiceTest {
-
-    private static final Logger log = LoggerFactory.getLogger(InvoiceServiceTest.class);
 
     @Mock
     private InvoiceRepository invoiceRepository;
@@ -35,37 +33,64 @@ class InvoiceServiceTest {
     @InjectMocks
     private InvoiceService invoiceService;
 
-    private final User mockUser = User.builder().id(1L).email("user@finolo.com").build();
-    private final Customer mockCustomer = Customer.builder().id(1L).name("Ali").build();
+    private InvoiceRequest invoiceRequest;
+    private Customer customer;
+    private User user;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
-        SecurityContextHolder.getContext().setAuthentication(
-                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                        mockUser, null, mockUser.getAuthorities()
-                )
+
+        user = User.builder()
+                .id(1L)
+                .email("test@finolo.com")
+                .password("pass")
+                .businessName("Finolo")
+                .role("USER")
+                .build();
+
+        customer = Customer.builder()
+                .id(1L)
+                .email("ali@veli.com")
+                .phone("555-1234")
+                .address("İstanbul")
+                .user(user)
+                .build();
+
+        invoiceRequest = InvoiceRequest.builder()
+                .amount(1500.0)
+                .date(LocalDate.of(2025, 5, 5))
+                .description("Test Faturası")
+                .customerId(1L)
+                .dueDate(LocalDate.of(2025, 5, 15))
+                .status("DRAFT")
+                .taxRate(18.0)
+                .note("Test notu")
+                .paymentMethod("Havale")
+                .build();
+
+        // 🔁 SecurityContext mocklama
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(
+                new UsernamePasswordAuthenticationToken(user, null)
         );
-        log.info("[InvoiceServiceTest] Test setup tamamlandı.");
+        SecurityContextHolder.setContext(securityContext);
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(invoiceRepository.save(any())).thenAnswer(i -> i.getArgument(0));
     }
 
     @Test
-    void shouldCreateInvoice() {
-        log.info("[InvoiceServiceTest] shouldCreateInvoice");
+    void testCreateInvoice() {
+        InvoiceResponse response = invoiceService.create(invoiceRequest);
 
-        InvoiceRequest request = new InvoiceRequest();
-        request.setCustomerId(1L);
-        request.setAmount(BigDecimal.valueOf(500));
-        request.setDate(LocalDate.now());
-        request.setDescription("Danışmanlık");
-
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(mockCustomer));
-        when(invoiceRepository.save(any(Invoice.class)))
-                .thenReturn(Invoice.builder().id(1L).amount(request.getAmount()).build());
-
-        Invoice result = invoiceService.create(request);
-
-        assertThat(result.getAmount()).isEqualTo(BigDecimal.valueOf(500));
-        verify(invoiceRepository).save(any());
+        assertNotNull(response);
+        assertEquals(1500.0, response.getAmount());
+        assertEquals("DRAFT", response.getStatus());
+        assertEquals("Test notu", response.getNote());
+        assertEquals("Havale", response.getPaymentMethod());
+        assertEquals(1L, response.getCustomerId());
+        assertEquals(1770.0, response.getTotalWithTax());
+        assertNotNull(response.getInvoiceNumber());
     }
 }

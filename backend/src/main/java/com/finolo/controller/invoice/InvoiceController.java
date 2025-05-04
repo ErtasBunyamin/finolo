@@ -1,7 +1,7 @@
 package com.finolo.controller.invoice;
 
 import com.finolo.dto.invoice.InvoiceRequest;
-import com.finolo.model.Invoice;
+import com.finolo.dto.invoice.InvoiceResponse;
 import com.finolo.service.invoice.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +18,12 @@ public class InvoiceController {
     private final InvoiceService invoiceService;
 
     @PostMapping
-    public ResponseEntity<Invoice> create(@Valid @RequestBody InvoiceRequest request) {
+    public ResponseEntity<InvoiceResponse> create(@Valid @RequestBody InvoiceRequest request) {
         return ResponseEntity.ok(invoiceService.create(request));
     }
 
     @GetMapping
-    public ResponseEntity<List<Invoice>> getAll() {
+    public ResponseEntity<List<InvoiceResponse>> getAll() {
         return ResponseEntity.ok(invoiceService.getAll());
     }
 }

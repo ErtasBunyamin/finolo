@@ -1,7 +1,5 @@
 package com.finolo.dto.invoice;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,31 +11,22 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class InvoiceRequest {
+public class InvoiceResponse {
 
-    @NotNull
+    private Long id;
     private Double amount;
-
-    @NotNull
     private LocalDate date;
-
-    @NotBlank
     private String description;
-
-    @NotNull
     private Long customerId;
 
     // ✅ Yeni alanlar:
-
-    @NotNull
+    private String invoiceNumber;
+    private String status;
     private LocalDate dueDate;
-
-    @NotBlank
-    private String status; // DRAFT, SENT, PAID, CANCELLED
-
+    private LocalDate createdAt;
+    private LocalDate updatedAt;
     private Double taxRate;
-
+    private Double totalWithTax;
     private String note;
-
     private String paymentMethod;
 }
