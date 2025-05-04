@@ -7,8 +7,8 @@ function Login() {
     const navigate = useNavigate();
     const { login } = useAuth();
 
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const [email, setEmail] = useState("TEST@FINOLO.COM");
+    const [password, setPassword] = useState("123123");
     const [error, setError] = useState(null);
 
     const handleSubmit = async (e) => {

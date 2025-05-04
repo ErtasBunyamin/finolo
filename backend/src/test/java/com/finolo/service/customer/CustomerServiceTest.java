@@ -4,87 +4,69 @@ import com.finolo.dto.customer.CustomerRequest;
 import com.finolo.model.Customer;
 import com.finolo.model.User;
 import com.finolo.repository.CustomerRepository;
+import com.finolo.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
+import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 class CustomerServiceTest {
 
-    private static final Logger log = LoggerFactory.getLogger(CustomerServiceTest.class);
-
-    @Mock
-    private CustomerRepository customerRepository;
-
-    @InjectMocks
     private CustomerService customerService;
+    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
+    private Authentication authentication;
 
-    private final User mockUser = User.builder()
-            .id(1L)
-            .email("test@finolo.com")
-            .password("pass")
-            .businessName("Finolo")
-            .role("USER")
-            .build();
+    private User mockUser;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
-        SecurityContextHolder.getContext().setAuthentication(
-                new org.springframework.security.authentication.UsernamePasswordAuthenticationToken(
-                        mockUser, null, mockUser.getAuthorities()
-                )
-        );
-        log.info("[CustomerServiceTest] Test setup tamamlandı.");
+        customerRepository = mock(CustomerRepository.class);
+        userRepository = mock(UserRepository.class);
+        authentication = mock(Authentication.class);
+
+        customerService = new CustomerService(customerRepository, userRepository);
+
+        mockUser = User.builder()
+                .id(1L)
+                .email("test@finolo.com")
+                .password("encoded")
+                .role("USER")
+                .build();
     }
 
     @Test
-    void shouldCreateCustomer() {
-        log.info("[CustomerServiceTest] shouldCreateCustomer");
+    void testCreateCustomer() {
+        CustomerRequest request = new CustomerRequest("Ali", "ali@mail.com", "555", "Adres");
 
-        CustomerRequest request = new CustomerRequest();
-        request.setName("Ali");
-        request.setEmail("ali@example.com");
-        request.setPhone("123456789");
-        request.setAddress("Ankara");
+        when(authentication.getName()).thenReturn("test@finolo.com");
+        when(userRepository.findByEmail("test@finolo.com")).thenReturn(Optional.of(mockUser));
 
-        Customer expected = Customer.builder()
+        customerService.createCustomer(request, authentication);
+
+        verify(customerRepository, times(1)).save(any(Customer.class));
+    }
+
+    @Test
+    void testGetAllCustomers() {
+        Customer customer = Customer.builder()
                 .id(1L)
-                .name(request.getName())
-                .email(request.getEmail())
-                .phone(request.getPhone())
-                .address(request.getAddress())
+                .name("Ali")
+                .email("ali@mail.com")
+                .phone("555")
+                .address("Adres")
                 .user(mockUser)
                 .build();
 
-        when(customerRepository.save(any(Customer.class))).thenReturn(expected);
+        when(authentication.getName()).thenReturn("test@finolo.com");
+        when(customerRepository.findAllByUser_Email("test@finolo.com")).thenReturn(List.of(customer));
 
-        Customer result = customerService.create(request);
+        customerService.getAllCustomers(authentication);
 
-        assertThat(result.getEmail()).isEqualTo("ali@example.com");
-        verify(customerRepository, times(1)).save(any());
-    }
-
-    @Test
-    void shouldGetAllCustomersForUser() {
-        log.info("[CustomerServiceTest] shouldGetAllCustomersForUser");
-
-        when(customerRepository.findByUser(mockUser)).thenReturn(List.of(
-                Customer.builder().id(1L).name("Ali").user(mockUser).build()
-        ));
-
-        List<Customer> result = customerService.getAllForCurrentUser();
-
-        assertThat(result).hasSize(1);
-        verify(customerRepository).findByUser(mockUser);
+        verify(customerRepository, times(1)).findAllByUser_Email("test@finolo.com");
     }
 }

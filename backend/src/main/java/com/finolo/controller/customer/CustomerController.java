@@ -1,11 +1,11 @@
 package com.finolo.controller.customer;
 
 import com.finolo.dto.customer.CustomerRequest;
-import com.finolo.model.Customer;
+import com.finolo.dto.customer.CustomerResponse;
 import com.finolo.service.customer.CustomerService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,12 +18,14 @@ public class CustomerController {
     private final CustomerService customerService;
 
     @PostMapping
-    public ResponseEntity<Customer> create(@Valid @RequestBody CustomerRequest request) {
-        return ResponseEntity.ok(customerService.create(request));
+    public ResponseEntity<Void> createCustomer(@RequestBody CustomerRequest request, Authentication authentication) {
+        customerService.createCustomer(request, authentication);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping
-    public ResponseEntity<List<Customer>> getAll() {
-        return ResponseEntity.ok(customerService.getAllForCurrentUser());
+    public ResponseEntity<List<CustomerResponse>> getAllCustomers(Authentication authentication) {
+        List<CustomerResponse> customers = customerService.getAllCustomers(authentication);
+        return ResponseEntity.ok(customers);
     }
 }
