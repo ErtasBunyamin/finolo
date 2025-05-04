@@ -1,81 +1,77 @@
 import {useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {useAuth} from "../context/AuthContext.jsx";
+import {Link, useNavigate} from "react-router-dom";
+import {useAuth} from "../context/AuthContext";
 import api from "../services/api";
+import finoloLogo from "../assets/finolo-logo.png"; // logoyu assets klasörüne koyduğunu varsayıyoruz
 
 function Login() {
-    const navigate = useNavigate();
     const { login } = useAuth();
+    const navigate = useNavigate();
 
-    const [email, setEmail] = useState("TEST@FINOLO.COM");
-    const [password, setPassword] = useState("123123");
-    const [error, setError] = useState(null);
+    const [form, setForm] = useState({ email: "", password: "" });
+    const [error, setError] = useState("");
+
+    const handleChange = (e) => {
+        setForm({ ...form, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError(null);
+        setError("");
 
         try {
-            const response = await api.post("/auth/login", {
-                email,
-                password,
-            });
-
-            const { token, email: userEmail, role } = response.data;
-
-            login({ email: userEmail, role }, token);
+            const res = await api.post("/auth/login", form);
+            login(res.data, res.data.token);
             navigate("/dashboard");
         } catch (err) {
-            console.error("Login failed:", err);
             setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
-            <form
-                onSubmit={handleSubmit}
-                className="bg-white p-8 rounded-2xl shadow-md w-full max-w-sm"
-            >
-                <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
-                    Finolo'ya Giriş
-                </h2>
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 px-4">
+            <img src={finoloLogo} alt="Finolo Logo" className="w-32 mb-6" />
 
-                {error && (
-                    <p className="text-red-600 mb-4 text-sm text-center">{error}</p>
-                )}
+            <div className="w-full max-w-md bg-white p-6 rounded shadow">
+                <h2 className="text-xl font-semibold text-center text-indigo-600 mb-4">Giriş Yap</h2>
 
-                <input
-                    type="email"
-                    placeholder="E-posta"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full p-3 mb-4 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-                    required
-                />
-                <input
-                    type="password"
-                    placeholder="Şifre"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="w-full p-3 mb-6 border rounded-md focus:outline-none focus:ring focus:ring-indigo-200"
-                    required
-                />
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="E-posta"
+                        value={form.email}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        required
+                    />
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Şifre"
+                        value={form.password}
+                        onChange={handleChange}
+                        className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
+                        required
+                    />
 
-                <button
-                    type="submit"
-                    className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition"
-                >
-                    Giriş Yap
-                </button>
+                    {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                <p className="text-sm text-center text-gray-500 mt-4">
-                    Hesabın yok mu?{" "}
-                    <a href="/register" className="text-indigo-600 hover:underline">
-                        Kayıt ol
-                    </a>
+                    <button
+                        type="submit"
+                        className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
+                    >
+                        Giriş Yap
+                    </button>
+                </form>
+
+                <p className="mt-4 text-sm text-center">
+                    Hesabınız yok mu?{" "}
+                    <Link to="/register" className="text-indigo-600 hover:underline">
+                        Kayıt Ol
+                    </Link>
                 </p>
-            </form>
+            </div>
         </div>
     );
 }
