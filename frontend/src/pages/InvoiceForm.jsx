@@ -1,138 +1,211 @@
 import {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {createInvoice} from "../services/invoiceService";
 import {getCustomers} from "../services/customerService";
-import PopupModal from "../components/PopupModal"; // modal bileşeni
+import {createInvoice} from "../services/invoiceService";
+import PopupModal from "../components/PopupModal";
 
 function InvoiceForm() {
-    const [form, setForm] = useState({
-        title: "",
-        amount: "",
-        date: "",
-        description: "",
-        customerId: "",
-    });
-
+    const navigate = useNavigate();
     const [customers, setCustomers] = useState([]);
     const [error, setError] = useState("");
     const [showModal, setShowModal] = useState(false);
-    const navigate = useNavigate();
+
+    const [formData, setFormData] = useState({
+        amount: "",
+        date: "",
+        dueDate: "",
+        description: "",
+        customerId: "",
+        status: "DRAFT",
+        taxRate: 0,
+        note: "",
+        paymentMethod: ""
+    });
 
     useEffect(() => {
-        async function fetchCustomers() {
-            try {
-                const data = await getCustomers();
-                setCustomers(data);
-
-                if (data.length === 0) {
-                    setShowModal(true); // müşteri yoksa modal göster
+        getCustomers()
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    if (data.length === 0) {
+                        setShowModal(true);
+                    } else {
+                        setCustomers(data);
+                        setShowModal(false);
+                    }
+                } else {
+                    console.error("Beklenmedik müşteri yapısı:", data);
+                    setError("Müşteri verisi beklenmedik formatta.");
                 }
-            } catch (err) {
-                console.error("Müşteriler alınamadı:", err);
-            }
-        }
-
-        fetchCustomers();
+            })
+            .catch((err) => {
+                console.error("getCustomers hatası:", err);
+                setError("Müşteriler alınamadı.");
+            });
     }, []);
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError("");
+        if (!formData.customerId) {
+            alert("Lütfen bir müşteri seçin.");
+            return;
+        }
 
         try {
-            await createInvoice(form);
+            await createInvoice(formData);
             navigate("/invoices");
         } catch (err) {
-            console.error("Fatura oluşturulamadı:", err);
-            setError("Fatura oluşturulurken bir hata oluştu.");
+            console.error(err);
+            setError("Fatura oluşturulamadı.");
         }
     };
 
-    const handleModalConfirm = () => {
-        setShowModal(false);
-        navigate("/customers/new");
-    };
-
-    const handleModalCancel = () => {
-        setShowModal(false);
-        navigate("/invoices");
-    };
-
     return (
-        <div className="p-4 max-w-xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4 text-indigo-600">Yeni Fatura</h2>
+        <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
+            <h2 className="text-2xl font-bold mb-6">Fatura Oluştur</h2>
+            <form onSubmit={handleSubmit} className="space-y-5">
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-                <input
-                    type="text"
-                    name="title"
-                    placeholder="Fatura Başlığı"
-                    value={form.title}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    required
-                />
-                <input
-                    type="number"
-                    name="amount"
-                    placeholder="Tutar (₺)"
-                    value={form.amount}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    required
-                />
-                <input
-                    type="date"
-                    name="date"
-                    value={form.date}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    required
-                />
-                <textarea
-                    name="description"
-                    placeholder="Açıklama"
-                    value={form.description}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    rows={3}
-                ></textarea>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Tutar</label>
+                    <input
+                        type="number"
+                        name="amount"
+                        value={formData.amount}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        required
+                    />
+                </div>
 
-                <select
-                    name="customerId"
-                    value={form.customerId}
-                    onChange={handleChange}
-                    className="w-full p-2 border rounded"
-                    required
-                >
-                    <option value="">Müşteri Seçin</option>
-                    {customers.map((c) => (
-                        <option key={c.id} value={c.id}>
-                            {c.name} ({c.email})
-                        </option>
-                    ))}
-                </select>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Fatura Tarihi</label>
+                    <input
+                        type="date"
+                        name="date"
+                        value={formData.date}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Son Ödeme Tarihi</label>
+                    <input
+                        type="date"
+                        name="dueDate"
+                        value={formData.dueDate}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Açıklama</label>
+                    <input
+                        type="text"
+                        name="description"
+                        value={formData.description}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        required
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Müşteri</label>
+                    <select
+                        name="customerId"
+                        value={formData.customerId}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        required
+                    >
+                        <option value="">Müşteri Seç</option>
+                        {customers.map((c) => (
+                            <option key={c.id} value={c.id}>
+                                {c.name || c.email}
+                            </option>
+                        ))}
+                    </select>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Durum</label>
+                    <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                    >
+                        <option value="DRAFT">Taslak</option>
+                        <option value="SENT">Gönderildi</option>
+                        <option value="PAID">Ödendi</option>
+                        <option value="CANCELLED">İptal Edildi</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Vergi Oranı (%)</label>
+                    <input
+                        type="number"
+                        name="taxRate"
+                        value={formData.taxRate}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Ödeme Yöntemi</label>
+                    <input
+                        type="text"
+                        name="paymentMethod"
+                        value={formData.paymentMethod}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        placeholder="Banka, Kredi Kartı vs."
+                    />
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Not (İsteğe bağlı)</label>
+                    <textarea
+                        name="note"
+                        value={formData.note}
+                        onChange={handleChange}
+                        className="w-full p-2 border rounded"
+                        rows="3"
+                        placeholder="Varsa özel notunuzu girin"
+                    />
+                </div>
 
                 {error && <p className="text-red-500 text-sm">{error}</p>}
 
-                <button type="submit" className="w-full bg-indigo-600 text-white p-2 rounded">
-                    Faturayı Kaydet
+                <button
+                    type="submit"
+                    className="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700 transition"
+                >
+                    Kaydet
                 </button>
             </form>
 
-            {/* Modal */}
-            {showModal && (
-                <PopupModal
-                    title="Müşteri Gerekli"
-                    message="Fatura oluşturabilmek için önce müşteri eklemelisiniz. Müşteri ekleme ekranına gitmek ister misiniz?"
-                    onConfirm={handleModalConfirm}
-                    onCancel={handleModalCancel}
-                />
-            )}
+            <PopupModal
+                isOpen={showModal}
+                title="Müşteri Gerekli"
+                message="Fatura oluşturmak için önce bir müşteri eklemelisiniz. Müşteri ekleme ekranına gitmek ister misiniz?"
+                onConfirm={() => {
+                    setShowModal(false);
+                    navigate("/customers/new");
+                }}
+                onCancel={() => {
+                    setShowModal(false);
+                    navigate("/dashboard");
+                }}
+            />
         </div>
     );
 }

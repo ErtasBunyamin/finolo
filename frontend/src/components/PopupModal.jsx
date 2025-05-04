@@ -1,6 +1,9 @@
 import React from "react";
 
-function PopupModal({ title, message, onConfirm, onCancel }) {
+function PopupModal({ isOpen, title, message, onConfirm, onCancel }) {
+
+    if (!isOpen) return null; // 👈 bu satır sayesinde DOM'a bile girmez
+
     return (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-lg shadow-md w-full max-w-md">

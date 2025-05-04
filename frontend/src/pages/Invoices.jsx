@@ -1,45 +1,78 @@
 import {useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
 import {getInvoices} from "../services/invoiceService";
 
 function Invoices() {
     const [invoices, setInvoices] = useState([]);
-    const navigate = useNavigate();
+    const [error, setError] = useState("");
 
     useEffect(() => {
-        async function fetchData() {
-            try {
-                const data = await getInvoices();
-                setInvoices(data);
-            } catch (err) {
+        getInvoices()
+            .then((data) => setInvoices(data))
+            .catch((err) => {
                 console.error("Faturalar alınamadı:", err);
-            }
-        }
-        fetchData();
+                setError("Faturalar alınamadı.");
+            });
     }, []);
 
+    const statusBadge = (status) => {
+        const base = "px-2 py-1 text-xs font-semibold rounded-full";
+        switch (status) {
+            case "PAID":
+                return <span className={`${base} bg-green-100 text-green-700`}>Ödendi</span>;
+            case "SENT":
+                return <span className={`${base} bg-blue-100 text-blue-700`}>Gönderildi</span>;
+            case "CANCELLED":
+                return <span className={`${base} bg-red-100 text-red-700`}>İptal Edildi</span>;
+            default:
+                return <span className={`${base} bg-gray-100 text-gray-700`}>Taslak</span>;
+        }
+    };
+
     return (
-        <div className="p-4">
-            <h2 className="text-2xl font-bold mb-4">Faturalar</h2>
+        <div className="max-w-5xl mx-auto mt-10 p-4">
+            <h2 className="text-2xl font-bold mb-6">Faturalar</h2>
 
-            <div className="grid grid-cols-1 gap-4">
-                {invoices.map((inv) => (
-                    <div key={inv.id} className="p-4 bg-white rounded shadow">
-                        <h3 className="text-lg font-semibold">{inv.title}</h3>
-                        <p>Tutar: ₺{inv.amount}</p>
-                        <p>Tarih: {inv.date}</p>
-                        <p>Açıklama: {inv.description}</p>
-                    </div>
-                ))}
+            {error && <p className="text-red-500 mb-4">{error}</p>}
+
+            <div className="overflow-x-auto bg-white rounded shadow">
+                <table className="min-w-full text-sm text-left">
+                    <thead className="bg-gray-100 text-gray-700 uppercase text-xs">
+                    <tr>
+                        <th className="px-6 py-3">Fatura No</th>
+                        <th className="px-6 py-3">Müşteri</th>
+                        <th className="px-6 py-3">Tutar</th>
+                        <th className="px-6 py-3">Tarih</th>
+                        <th className="px-6 py-3">Durum</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {invoices.length > 0 ? (
+                        invoices.map((invoice) => (
+                            <tr
+                                key={invoice.id}
+                                className="border-b hover:bg-gray-50 transition"
+                            >
+                                <td className="px-6 py-3">#{invoice.id}</td>
+                                <td className="px-6 py-3">
+                                    {invoice.customerId}
+                                </td>
+                                <td className="px-6 py-3">{invoice.amount} ₺</td>
+                                <td className="px-6 py-3">
+                                    {new Date(invoice.date).toLocaleDateString("tr-TR")}
+                                </td>
+                                <td className="px-6 py-3">{statusBadge(invoice.status)}</td>
+                            </tr>
+                        ))
+                    ) : (
+                        <tr>
+                            <td colSpan="5" className="text-center py-6 text-gray-500">
+                                Henüz fatura bulunmuyor.
+                            </td>
+                        </tr>
+                    )}
+                    </tbody>
+                </table>
             </div>
-
-            {/* FAB Butonu */}
-            <button
-                onClick={() => navigate("/invoices/new")}
-                className="fixed bottom-6 right-6 bg-indigo-600 text-white w-14 h-14 rounded-full text-3xl shadow-lg hover:bg-indigo-700"
-            >
-                +
-            </button>
         </div>
     );
 }
