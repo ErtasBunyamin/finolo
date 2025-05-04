@@ -5,7 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
-import Layout from "./layout/Layout";
+import Layout from "./components/Layout.jsx";
 import CustomerForm from "./pages/CustomerForm.jsx";
 
 function App() {
@@ -17,12 +17,49 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 {/* Giriş yapmış kullanıcılar için layout */}
-                <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                    <Route path="/customers" element={<Customers />} />
-                    <Route path="/profile" element={<Profile />} />
-                    <Route path="/customers/new" element={<CustomerForm />} />
-                </Route>
+                <Route
+                    path="/dashboard"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <Dashboard />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/customers"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <Customers />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/customers/new"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <CustomerForm />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
+
+                <Route
+                    path="/profile"
+                    element={
+                        <PrivateRoute>
+                            <Layout>
+                                <Profile />
+                            </Layout>
+                        </PrivateRoute>
+                    }
+                />
             </Routes>
         </Router>
     );
