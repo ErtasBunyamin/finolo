@@ -6,9 +6,9 @@ import Customers from "./pages/Customers";
 import Profile from "./pages/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
 import Layout from "./components/Layout.jsx";
-import CustomerForm from "./pages/CustomerForm.jsx";
 import Invoices from "./pages/Invoices.jsx";
 import InvoiceForm from "./pages/InvoiceForm.jsx";
+import InvoiceDetail from "./pages/InvoiceDetail";
 
 function App() {
     return (
@@ -19,70 +19,15 @@ function App() {
                 <Route path="/register" element={<Register />} />
 
                 {/* Giriş yapmış kullanıcılar için layout */}
-                <Route
-                    path="/dashboard"
-                    element={
-                        <PrivateRoute>
-                            <Layout>
-                                <Dashboard />
-                            </Layout>
-                        </PrivateRoute>
-                    }
-                />
-
-                <Route
-                    path="/customers"
-                    element={
-                        <PrivateRoute>
-                            <Layout>
-                                <Customers />
-                            </Layout>
-                        </PrivateRoute>
-                    }
-                />
-
-                <Route
-                    path="/customers/new"
-                    element={
-                        <PrivateRoute>
-                            <Layout>
-                                <CustomerForm />
-                            </Layout>
-                        </PrivateRoute>
-                    }
-                />
-
-                <Route
-                    path="/profile"
-                    element={
-                        <PrivateRoute>
-                            <Layout>
-                                <Profile />
-                            </Layout>
-                        </PrivateRoute>
-                    }
-                />
-                <Route
-                    path="/invoices"
-                    element={
-                        <PrivateRoute>
-                            <Layout>
-                                <Invoices />
-                            </Layout>
-                        </PrivateRoute>
-                    }
-                />
-
-                <Route
-                    path="/invoices/new"
-                    element={
-                        <PrivateRoute>
-                            <Layout>
-                                <InvoiceForm />
-                            </Layout>
-                        </PrivateRoute>
-                    }
-                />
+                <Route element={<PrivateRoute><Layout /></PrivateRoute>}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/customers" element={<Customers />} />
+                    <Route path="/customers/new" element={<Customers />} />
+                    <Route path="/profile" element={<Profile />} />
+                    <Route path="/invoices" element={<Invoices />} />
+                    <Route path="/invoices/:id" element={<InvoiceDetail />} />
+                    <Route path="/invoice/new" element={<InvoiceForm />} />
+                </Route>
             </Routes>
         </Router>
     );

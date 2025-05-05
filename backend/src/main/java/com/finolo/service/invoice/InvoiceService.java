@@ -2,6 +2,7 @@ package com.finolo.service.invoice;
 
 import com.finolo.dto.invoice.InvoiceRequest;
 import com.finolo.dto.invoice.InvoiceResponse;
+import com.finolo.mapper.InvoiceMapper;
 import com.finolo.model.Customer;
 import com.finolo.model.Invoice;
 import com.finolo.model.User;
@@ -20,6 +21,7 @@ import java.util.List;
 public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
+    private final InvoiceMapper invoiceMapper;
     private final CustomerRepository customerRepository;
 
     public InvoiceResponse create(InvoiceRequest request) {
@@ -103,6 +105,42 @@ public class InvoiceService {
         }
 
         invoiceRepository.delete(invoice);
+    }
+
+    public InvoiceResponse getInvoiceById(Long id) {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fatura bulunamadı"));
+
+        if (!invoice.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Bu faturaya erişiminiz yok.");
+        }
+
+        return invoiceMapper.toResponse(invoice);
+    }
+
+    public InvoiceResponse updateInvoice(Long id, InvoiceRequest request) {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        Invoice invoice = invoiceRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Fatura bulunamadı"));
+
+        if (!invoice.getUser().getId().equals(currentUser.getId())) {
+            throw new RuntimeException("Bu faturayı güncelleme yetkiniz yok.");
+        }
+
+        Customer customer = customerRepository.findById(request.getCustomerId())
+                .orElseThrow(() -> new RuntimeException("Müşteri bulunamadı"));
+
+        invoice.setDate(request.getDate());
+        invoice.setAmount(request.getAmount());
+        invoice.setDescription(request.getDescription());
+        invoice.setStatus(request.getStatus());
+        invoice.setCustomer(customer);
+
+        Invoice updated = invoiceRepository.save(invoice);
+        return invoiceMapper.toResponse(updated);
     }
 
 }

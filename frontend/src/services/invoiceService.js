@@ -1,17 +1,28 @@
-import API from "./api";
+import api from "./api";
 
-// Tüm faturaları getir
 export const getInvoices = async () => {
-    const res = await API.get("/invoices");
-    return res.data.data;
+    const res = await api.get("/invoices");
+    return res.data;
 };
 
-// Yeni fatura oluştur
-export const createInvoice = async (invoiceData) => {
-    const res = await API.post("/invoices", invoiceData);
-    return res.data.data;
+export const createInvoice = async (data) => {
+    const res = await api.post("/invoices", data);
+    return res.data;
 };
 
 export const deleteInvoice = async (id) => {
-    return API.delete(`/invoices/${id}`);
+    const res = await api.delete(`/invoices/${id}`);
+    return res.data;
 };
+
+export const getInvoiceById = async (id) => {
+    const res = await api.get(`/invoices/${id}`);
+    return res.data;
+};
+
+export const updateInvoice = async (id, data) => {
+    const res = await api.put(`/invoices/${id}`, data);
+    return res.data;
+};
+
+
