@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getDashboardSummary, getMonthlyStats, getPaymentStats, getRecentInvoices} from "../services/dashboardService";
+import {getDashboardSummary, getMonthlyStats, getPaymentStats, getRecentInvoices, getRecentOperations} from "../services/dashboardService";
 import DashboardCard from "../components/DashboardCard";
 import MonthlyBarChart from "../components/MonthlyBarChart";
 import PaymentDonutChart from "../components/PaymentDonutChart";
@@ -10,6 +10,7 @@ function Dashboard() {
     const [recentInvoices, setRecentInvoices] = useState([]);
     const [monthlyStats, setMonthlyStats] = useState([]);
     const [paymentStats, setPaymentStats] = useState({});
+    const [operations, setOperations] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -29,6 +30,9 @@ function Dashboard() {
                     }));
                     setMonthlyStats(chartData);
                 }
+
+                const opsData = await getRecentOperations();
+                if (opsData.success) setOperations(opsData.data);
 
                 const fetchPayments = await getPaymentStats();
                 if (fetchPayments.success) setPaymentStats(fetchPayments.data);
@@ -83,6 +87,20 @@ function Dashboard() {
                     </table>
                 ) : (
                     <p className="text-gray-500">Kayıtlı fatura bulunamadı.</p>
+                )}
+            </div>
+
+            {/* Son İşlemler */}
+            <div className="bg-white p-4 rounded shadow">
+                <h2 className="text-lg font-semibold text-indigo-600 mb-4">Son İşlemler</h2>
+                {operations.length > 0 ? (
+                    <ul className="list-disc pl-5 space-y-1 text-sm">
+                        {operations.map((op, idx) => (
+                            <li key={idx}>{op.message}</li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-gray-500">Kayıtlı işlem bulunamadı.</p>
                 )}
             </div>
 

@@ -1,9 +1,11 @@
 package com.finolo.service.dashboard;
 
 import com.finolo.dto.dashboard.DashboardSummaryResponse;
+import com.finolo.dto.dashboard.OperationResponse;
 import com.finolo.dto.invoice.InvoiceResponse;
 import com.finolo.mapper.InvoiceMapper;
 import com.finolo.model.Invoice;
+import com.finolo.model.Customer;
 import com.finolo.model.User;
 import com.finolo.repository.CustomerRepository;
 import com.finolo.repository.InvoiceRepository;
@@ -48,6 +50,39 @@ public class DashboardService {
         List<Invoice> invoices = invoiceRepository.findTop5ByUserOrderByDateDesc(currentUser);
         return invoices.stream()
                 .map(invoiceMapper::toResponse)
+                .toList();
+    }
+
+    public List<OperationResponse> getRecentOperations() {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<Invoice> invoices = invoiceRepository.findTop5ByUserOrderByCreatedAtDesc(currentUser);
+        List<Customer> customers = customerRepository.findTop5ByUserOrderByIdDesc(currentUser);
+
+        List<OperationResponse> ops = invoices.stream()
+                .map(inv -> OperationResponse.builder()
+                        .type("INVOICE")
+                        .message("Fatura oluşturuldu: " + inv.getInvoiceNumber())
+                        .date(inv.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+
+        ops.addAll(customers.stream()
+                .map(c -> OperationResponse.builder()
+                        .type("CUSTOMER")
+                        .message("Müşteri eklendi: " + c.getName())
+                        .date(null)
+                        .build())
+                .toList());
+
+        return ops.stream()
+                .sorted((a, b) -> {
+                    if (a.getDate() == null && b.getDate() == null) return 0;
+                    if (a.getDate() == null) return 1;
+                    if (b.getDate() == null) return -1;
+                    return b.getDate().compareTo(a.getDate());
+                })
+                .limit(5)
                 .toList();
     }
 
