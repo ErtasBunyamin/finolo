@@ -23,7 +23,11 @@ function Customers() {
       <h2 className="text-2xl font-bold mb-4">Müşteriler</h2>
       <div className="grid grid-cols-1 gap-4">
         {customers.map((c) => (
-          <div key={c.id} className="p-4 bg-white rounded shadow">
+          <div
+            key={c.id}
+            onClick={() => navigate(`/customers/${c.id}`)}
+            className="p-4 bg-white rounded shadow cursor-pointer hover:bg-gray-50"
+          >
             <h3 className="text-lg font-semibold">{c.name}</h3>
             <p>{c.email}</p>
             <p>{c.phone}</p>
