@@ -81,8 +81,8 @@ function Invoices() {
                 </button>
             </div>
 
-            <table className="min-w-full w-full text-sm text-left text-gray-700 bg-white shadow rounded">
-                <thead className="bg-gray-100 text-sm text-gray-700">
+            <table className="min-w-full w-full text-sm text-left text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 shadow rounded">
+                <thead className="bg-gray-100 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200">
                 <tr>
                     <th className="px-4 py-2 text-left">Fatura No</th>
                     <th className="px-4 py-2 text-left">Müşteri</th>
