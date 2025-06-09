@@ -32,6 +32,8 @@ public class User implements UserDetails {
 
     private String businessName;
 
+    private String themePreference;
+
     private String role; // örn: USER, ADMIN
 
     // ---- UserDetails metodları ----

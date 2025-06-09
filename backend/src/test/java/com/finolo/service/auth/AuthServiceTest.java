@@ -25,6 +25,9 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private com.finolo.security.JwtService jwtService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -44,6 +47,7 @@ class AuthServiceTest {
 
         when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("hashed-pass");
+        when(jwtService.generateToken("test@example.com")).thenReturn("token");
 
         var response = authService.register(request);
 

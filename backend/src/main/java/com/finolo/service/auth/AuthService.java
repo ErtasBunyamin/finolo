@@ -29,6 +29,7 @@ public class AuthService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .businessName(request.getBusinessName())
+                .themePreference("light")
                 .role("USER")
                 .build();
 
