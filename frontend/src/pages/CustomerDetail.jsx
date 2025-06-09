@@ -26,6 +26,7 @@ function CustomerDetail() {
           setInvoices(related);
         }
       } catch (err) {
+        console.error(err);
         setError("Veriler alınamadı.");
       }
     };
