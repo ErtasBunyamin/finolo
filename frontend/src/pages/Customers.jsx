@@ -27,7 +27,7 @@ function Customers() {
             <h3 className="text-lg font-semibold">{c.name}</h3>
             <p>{c.email}</p>
             <p>{c.phone}</p>
-            <p>{c.city}</p>
+            <p>{c.address}</p>
           </div>
         ))}
       </div>
