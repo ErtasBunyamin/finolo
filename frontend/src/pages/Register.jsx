@@ -30,7 +30,8 @@ function Register() {
             navigate("/dashboard");
         } catch (err) {
             console.error(err);
-            setError("Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.");
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 dark:bg-gray-900 px-4">
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded shadow">
         }
     };
 

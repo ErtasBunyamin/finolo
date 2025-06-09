@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {deleteInvoice, getInvoices} from "../services/invoiceService";
+import {deleteInvoice, getInvoices, exportInvoicesPdf, exportInvoicesExcel} from "../services/invoiceService";
 import {Link} from "react-router-dom";
 import {formatDate} from "../utils/dateUtils";
 import {Plus} from "lucide-react";
@@ -35,9 +35,51 @@ function Invoices() {
         }
     };
 
+    const downloadFile = (data, filename) => {
+        const url = window.URL.createObjectURL(new Blob([data]));
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", filename);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+    };
+
+    const handleExportPdf = async () => {
+        try {
+            const res = await exportInvoicesPdf();
+            downloadFile(res.data, "invoices.pdf");
+        } catch (err) {
+            console.error("PDF indirilemedi", err);
+        }
+    };
+
+    const handleExportExcel = async () => {
+        try {
+            const res = await exportInvoicesExcel();
+            downloadFile(res.data, "invoices.xlsx");
+        } catch (err) {
+            console.error("Excel indirilemedi", err);
+        }
+    };
+
     return (
         <div className="overflow-x-auto w-full">
             <h2 className="text-2xl font-bold text-indigo-600 mb-4">Faturalar</h2>
+            <div className="flex justify-end space-x-2 mb-4">
+                <button
+                    onClick={handleExportPdf}
+                    className="px-3 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700"
+                >
+                    PDF İndir
+                </button>
+                <button
+                    onClick={handleExportExcel}
+                    className="px-3 py-2 text-sm rounded bg-green-600 text-white hover:bg-green-700"
+                >
+                    Excel İndir
+                </button>
+            </div>
 
             <table className="min-w-full w-full text-sm text-left text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 shadow rounded">
                 <thead className="bg-gray-100 dark:bg-gray-700 text-sm text-gray-700 dark:text-gray-200">

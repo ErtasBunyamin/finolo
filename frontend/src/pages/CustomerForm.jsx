@@ -1,10 +1,74 @@
 import {useState} from "react";
 import * as Yup from "yup";
-import {useNavigate} from "react-router-dom";
-import {createCustomer} from "../services/customerService.js";
+  const [errors, setErrors] = useState({});
+  const schema = Yup.object().shape({
+    name: Yup.string().required("İsim gerekli"),
+    email: Yup.string().email("Geçerli bir email girin").required("Email gerekli"),
+    phone: Yup.string()
+      .matches(/^\+?\d{10,15}$/, "Geçerli bir telefon numarası girin")
+      .required("Telefon gerekli"),
+    address: Yup.string().required("Adres gerekli")
+  });
 
-function CustomerForm() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", address: "" });
+      await schema.validate(form, { abortEarly: false });
+      if (error instanceof Yup.ValidationError) {
+        const validationErrors = {};
+        error.inner.forEach((err) => {
+          if (err.path) validationErrors[err.path] = err.message;
+        });
+        setErrors(validationErrors);
+      } else {
+        console.error("Kayıt hatası:", error);
+      }
+    <div className="p-4 max-w-xl mx-auto bg-white dark:bg-gray-800 rounded shadow">
+        <div>
+          <input
+            type="text"
+            name="name"
+            placeholder="Ad Soyad"
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+          {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
+        </div>
+
+        <div>
+          <input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        </div>
+
+        <div>
+          <input
+            type="text"
+            name="phone"
+            placeholder="Telefon"
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+          {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
+        </div>
+
+        <div>
+          <input
+            type="text"
+            name="address"
+            placeholder="Adres"
+            onChange={handleChange}
+            className="w-full p-2 border rounded"
+            required
+          />
+          {errors.address && <p className="text-red-500 text-sm mt-1">{errors.address}</p>}
+        </div>
+
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 

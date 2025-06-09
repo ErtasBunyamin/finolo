@@ -1,12 +1,42 @@
 import {useEffect, useState} from "react";
 import * as Yup from "yup";
-import {useNavigate} from "react-router-dom";
-import {getCustomers} from "../services/customerService";
-import {createInvoice} from "../services/invoiceService";
-import PopupModal from "../components/PopupModal";
+    const [formErrors, setFormErrors] = useState({});
+    const schema = Yup.object().shape({
+        amount: Yup.number().typeError("Tutar sayı olmalı").positive("Tutar pozitif olmalı").required("Tutar gerekli"),
+        date: Yup.date().required("Fatura tarihi gerekli"),
+        dueDate: Yup.date().nullable(),
+        description: Yup.string().required("Açıklama gerekli"),
+        customerId: Yup.string().required("Müşteri seçimi gerekli")
+    });
 
-function InvoiceForm() {
-    const navigate = useNavigate();
+            await schema.validate(formData, { abortEarly: false });
+            if (err instanceof Yup.ValidationError) {
+                const validationErrors = {};
+                err.inner.forEach((e) => {
+                    if (e.path) validationErrors[e.path] = e.message;
+                });
+                setFormErrors(validationErrors);
+            } else {
+                console.error(err);
+                setError("Fatura oluşturulamadı.");
+            }
+        <div className="max-w-2xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded shadow">
+                        min="0"
+                    {formErrors.amount && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.amount}</p>
+                    )}
+                    {formErrors.date && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.date}</p>
+                    )}
+                    {formErrors.dueDate && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.dueDate}</p>
+                    )}
+                    {formErrors.description && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>
+                    )}
+                    {formErrors.customerId && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.customerId}</p>
+                    )}
     const [customers, setCustomers] = useState([]);
     const [error, setError] = useState("");
     const [showModal, setShowModal] = useState(false);

@@ -30,6 +30,7 @@ function InvoiceDetail() {
                 }
             } catch (err) {
                 console.error(err);
+        <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded shadow mt-6">
                 setError("Fatura detayları alınamadı.");
             }
         };

@@ -7,6 +7,11 @@ import com.finolo.model.User;
 import com.finolo.repository.UserRepository;
 import com.finolo.security.JwtService;
 import com.finolo.service.mail.MailService;
+    private final MailService mailService;
+                .role(request.getRole() != null ? request.getRole() : "USER")
+        // Yeni kullanıcıya hoş geldiniz e-postası gönder
+        mailService.sendWelcomeMail(user.getEmail());
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

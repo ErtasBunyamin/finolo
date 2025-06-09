@@ -19,4 +19,7 @@ public class RegisterRequest {
 
     // optional, defaults to USER if not provided
     private String role;
+
+    // optional, defaults to USER if not provided
+    private String role;
 }
