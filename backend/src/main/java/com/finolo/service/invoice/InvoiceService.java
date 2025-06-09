@@ -137,6 +137,14 @@ public class InvoiceService {
         invoice.setAmount(request.getAmount());
         invoice.setDescription(request.getDescription());
         invoice.setStatus(request.getStatus());
+        invoice.setDueDate(request.getDueDate());
+        invoice.setTaxRate(request.getTaxRate());
+        invoice.setPaymentMethod(request.getPaymentMethod());
+        invoice.setNote(request.getNote());
+
+        double taxRate = request.getTaxRate() != null ? request.getTaxRate() : 0.0;
+        invoice.setTotalWithTax(request.getAmount() * (1 + (taxRate / 100.0)));
+
         invoice.setCustomer(customer);
 
         Invoice updated = invoiceRepository.save(invoice);

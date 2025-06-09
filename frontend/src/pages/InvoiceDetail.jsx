@@ -110,6 +110,41 @@ function InvoiceDetail() {
                         placeholder="Açıklama"
                     />
 
+                    <input
+                        type="date"
+                        name="dueDate"
+                        value={dayjs(form.dueDate).format("YYYY-MM-DD")}
+                        onChange={handleChange}
+                        className="w-full border px-3 py-2 rounded"
+                    />
+
+                    <input
+                        type="number"
+                        name="taxRate"
+                        value={form.taxRate || 0}
+                        onChange={handleChange}
+                        className="w-full border px-3 py-2 rounded"
+                        placeholder="Vergi Oranı"
+                    />
+
+                    <input
+                        type="text"
+                        name="paymentMethod"
+                        value={form.paymentMethod || ""}
+                        onChange={handleChange}
+                        className="w-full border px-3 py-2 rounded"
+                        placeholder="Ödeme Yöntemi"
+                    />
+
+                    <textarea
+                        name="note"
+                        value={form.note || ""}
+                        onChange={handleChange}
+                        className="w-full border px-3 py-2 rounded"
+                        rows="3"
+                        placeholder="Not"
+                    />
+
                     <select
                         name="status"
                         value={form.status}
@@ -151,6 +186,21 @@ function InvoiceDetail() {
                     <p>
                         <strong>Açıklama:</strong> {invoice.description}
                     </p>
+                    <p>
+                        <strong>Son Ödeme:</strong>{" "}
+                        {dayjs(invoice.dueDate).format("DD.MM.YYYY")}
+                    </p>
+                    <p>
+                        <strong>Vergi Oranı:</strong> {invoice.taxRate || 0}%
+                    </p>
+                    <p>
+                        <strong>Ödeme Yöntemi:</strong> {invoice.paymentMethod}
+                    </p>
+                    {invoice.note && (
+                        <p>
+                            <strong>Not:</strong> {invoice.note}
+                        </p>
+                    )}
                     <p>
                         <strong>Durum:</strong>{" "}
                         {invoice.status === "PAID" ? "Ödenmiş" : "Ödenmemiş"}
