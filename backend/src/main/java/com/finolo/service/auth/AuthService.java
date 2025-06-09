@@ -6,6 +6,7 @@ import com.finolo.dto.auth.RegisterRequest;
 import com.finolo.model.User;
 import com.finolo.repository.UserRepository;
 import com.finolo.security.JwtService;
+import com.finolo.service.mail.MailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,6 +20,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final MailService mailService;
 
     public AuthResponse register(RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -30,10 +32,13 @@ public class AuthService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .businessName(request.getBusinessName())
                 .themePreference("light")
-                .role("USER")
+                .role(request.getRole() != null ? request.getRole() : "USER")
                 .build();
 
         userRepository.save(user);
+
+        // Yeni kullanıcıya hoş geldiniz e-postası gönder
+        mailService.sendWelcomeMail(user.getEmail());
 
         String token = jwtService.generateToken(user.getUsername());
 

@@ -19,3 +19,8 @@ export const getPaymentStats = async () => {
     const res = await api.get("/dashboard/payment-stats");
     return res.data;
 };
+
+export const getRecentOperations = async () => {
+    const res = await api.get("/dashboard/operations");
+    return res.data;
+};

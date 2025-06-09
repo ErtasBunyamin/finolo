@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {getDashboardSummary, getMonthlyStats, getPaymentStats, getRecentInvoices} from "../services/dashboardService";
+import {getDashboardSummary, getMonthlyStats, getPaymentStats, getRecentInvoices, getRecentOperations} from "../services/dashboardService";
 import DashboardCard from "../components/DashboardCard";
 import MonthlyBarChart from "../components/MonthlyBarChart";
 import PaymentDonutChart from "../components/PaymentDonutChart";
@@ -10,6 +10,7 @@ function Dashboard() {
     const [recentInvoices, setRecentInvoices] = useState([]);
     const [monthlyStats, setMonthlyStats] = useState([]);
     const [paymentStats, setPaymentStats] = useState({});
+    const [operations, setOperations] = useState([]);
     const [error, setError] = useState("");
 
     useEffect(() => {
@@ -30,9 +31,13 @@ function Dashboard() {
                     setMonthlyStats(chartData);
                 }
 
+                const opsData = await getRecentOperations();
+                if (opsData.success) setOperations(opsData.data);
+
                 const fetchPayments = await getPaymentStats();
                 if (fetchPayments.success) setPaymentStats(fetchPayments.data);
             } catch (err) {
+                console.error(err);
                 setError("Dashboard verileri alınamadı.");
             }
         };
@@ -55,7 +60,7 @@ function Dashboard() {
             )}
 
             {/* Son 5 Fatura */}
-            <div className="bg-white p-4 rounded shadow">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
                 <h2 className="text-lg font-semibold text-indigo-600 mb-4">Son Faturalar</h2>
                 {recentInvoices.length > 0 ? (
                     <table className="w-full text-sm">
@@ -70,7 +75,7 @@ function Dashboard() {
                         </thead>
                         <tbody>
                         {recentInvoices.map((inv) => (
-                            <tr key={inv.id} className="border-b hover:bg-gray-50">
+                            <tr key={inv.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <td>{inv.invoiceNumber}</td>
                                 <td>{inv.customerName}</td>
                                 <td>{inv.date}</td>
@@ -85,14 +90,28 @@ function Dashboard() {
                 )}
             </div>
 
+            {/* Son İşlemler */}
+            <div className="bg-white p-4 rounded shadow">
+                <h2 className="text-lg font-semibold text-indigo-600 mb-4">Son İşlemler</h2>
+                {operations.length > 0 ? (
+                    <ul className="list-disc pl-5 space-y-1 text-sm">
+                        {operations.map((op, idx) => (
+                            <li key={idx}>{op.message}</li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p className="text-gray-500">Kayıtlı işlem bulunamadı.</p>
+                )}
+            </div>
+
             {/* Grafik ve Tahsilat */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded shadow md:col-span-2">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow md:col-span-2">
                     <h2 className="text-lg font-semibold text-indigo-600 mb-4">Aylık Fatura Gelirleri</h2>
                     <MonthlyBarChart data={monthlyStats} />
                 </div>
 
-                <div className="bg-white p-4 rounded shadow">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
                     <h2 className="text-lg font-semibold text-indigo-600 mb-4">Tahsilat Durumu</h2>
                     <PaymentDonutChart data={paymentStats} />
                 </div>

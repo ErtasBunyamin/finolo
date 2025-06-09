@@ -61,6 +61,23 @@ class AuthControllerTest {
     }
 
     @Test
+    void shouldReturnError_WhenRegistrationFails() throws Exception {
+        RegisterRequest request = new RegisterRequest();
+        request.setEmail("exists@finolo.com");
+        request.setPassword("123456");
+        request.setBusinessName("Finolo");
+
+        when(authService.register(any())).thenThrow(new RuntimeException("Bu e-posta zaten kayıtlı."));
+
+        mockMvc.perform(post("/api/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.message").value("Bu e-posta zaten kayıtlı."));
+    }
+
+    @Test
     void shouldLoginSuccessfully() throws Exception {
         LoginRequest request = new LoginRequest();
         request.setEmail("login@finolo.com");

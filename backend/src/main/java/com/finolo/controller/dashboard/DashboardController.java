@@ -2,6 +2,7 @@ package com.finolo.controller.dashboard;
 
 import com.finolo.dto.common.BaseResponse;
 import com.finolo.dto.dashboard.DashboardSummaryResponse;
+import com.finolo.dto.dashboard.OperationResponse;
 import com.finolo.dto.invoice.InvoiceResponse;
 import com.finolo.service.dashboard.DashboardService;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +43,12 @@ public class DashboardController {
     public ResponseEntity<BaseResponse<Map<String, Long>>> getPaymentStats() {
         var stats = dashboardService.getPaymentStats();
         return ResponseEntity.ok(BaseResponse.success(stats, "Tahsilat durumu getirildi"));
+    }
+
+    @GetMapping("/operations")
+    public ResponseEntity<BaseResponse<List<OperationResponse>>> getOperations() {
+        var ops = dashboardService.getRecentOperations();
+        return ResponseEntity.ok(BaseResponse.success(ops, "Son işlemler getirildi"));
     }
 
 
