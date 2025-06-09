@@ -6,12 +6,16 @@ import com.finolo.dto.invoice.InvoiceResponse;
 import com.finolo.service.invoice.InvoiceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:5173")
 @RestController
 @RequestMapping("/api/invoices")
 @RequiredArgsConstructor
@@ -45,6 +49,26 @@ public class InvoiceController {
     public ResponseEntity<BaseResponse<InvoiceResponse>> updateInvoice(@PathVariable Long id, @RequestBody @Valid InvoiceRequest request) {
         InvoiceResponse updated = invoiceService.updateInvoice(id, request);
         return ResponseEntity.ok(BaseResponse.success(updated, "Fatura güncellendi"));
+    }
+
+    @GetMapping("/export/pdf")
+    public ResponseEntity<byte[]> exportPdf() {
+        byte[] data = invoiceService.exportInvoicesToPdf();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename("invoices.pdf").build().toString())
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(data);
+    }
+
+    @GetMapping("/export/excel")
+    public ResponseEntity<byte[]> exportExcel() {
+        byte[] data = invoiceService.exportInvoicesToExcel();
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        ContentDisposition.attachment().filename("invoices.xlsx").build().toString())
+                .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(data);
     }
 
 }

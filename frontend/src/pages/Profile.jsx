@@ -23,7 +23,7 @@ function Profile() {
     if (loading) return <div className="p-4">Yükleniyor...</div>;
 
     return (
-        <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded shadow">
+        <div className="max-w-md mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded shadow">
             <h2 className="text-2xl font-bold mb-4 text-indigo-600">Profil Bilgileri</h2>
             <div className="space-y-2">
                 <p><strong>Firma Adı:</strong> {user.businessName}</p>

@@ -16,4 +16,7 @@ public class RegisterRequest {
 
     @NotBlank(message = "İşletme adı boş olamaz")
     private String businessName;
+
+    // optional, defaults to USER if not provided
+    private String role;
 }

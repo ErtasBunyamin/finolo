@@ -25,4 +25,12 @@ export const updateInvoice = async (id, data) => {
     return res.data;
 };
 
+export const exportInvoicesPdf = async () => {
+    return api.get('/invoices/export/pdf', { responseType: 'blob' });
+};
+
+export const exportInvoicesExcel = async () => {
+    return api.get('/invoices/export/excel', { responseType: 'blob' });
+};
+
 
