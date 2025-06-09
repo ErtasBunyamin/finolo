@@ -26,7 +26,7 @@ function Customers() {
           <div
             key={c.id}
             onClick={() => navigate(`/customers/${c.id}`)}
-            className="p-4 bg-white rounded shadow cursor-pointer hover:bg-gray-50"
+            className="p-4 bg-white dark:bg-gray-800 rounded shadow cursor-pointer hover:bg-gray-50"
           >
             <h3 className="text-lg font-semibold">{c.name}</h3>
             <p>{c.email}</p>

@@ -1,5 +1,8 @@
 package com.finolo.exception;
 
+import com.finolo.dto.common.BaseResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,35 +16,53 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     // DTO @Valid hataları (alan bazlı)
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidationException(MethodArgumentNotValidException ex) {
+    public ResponseEntity<BaseResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error ->
                 errors.put(error.getField(), error.getDefaultMessage())
         );
 
-        return ResponseEntity.badRequest().body(errors);
+        logger.error("Validation error: {}", errors, ex);
+
+        return ResponseEntity.badRequest().body(
+                BaseResponse.<Map<String, String>>builder()
+                        .success(false)
+                        .message("Validasyon hatası")
+                        .data(errors)
+                        .build()
+        );
     }
 
     // Servis içi manuel hata fırlatmaları
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<?> handleRuntime(RuntimeException ex) {
+    public ResponseEntity<BaseResponse<Void>> handleRuntime(RuntimeException ex) {
+        logger.error("Runtime exception: {}", ex.getMessage(), ex);
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
-                .body(Map.of("error", ex.getMessage()));
+                .body(BaseResponse.error(ex.getMessage()));
     }
 
     // Diğer her şey (beklenmeyen hata)
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGeneral(Exception ex) {
+    public ResponseEntity<BaseResponse<Map<String, Object>>> handleGeneral(Exception ex) {
+        logger.error("Unexpected error", ex);
+        Map<String, Object> detail = Map.of(
+                "timestamp", LocalDateTime.now(),
+                "detail", ex.getMessage()
+        );
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(Map.of(
-                        "timestamp", LocalDateTime.now(),
-                        "error", "Sunucu hatası",
-                        "detail", ex.getMessage()
-                ));
+                .body(
+                        BaseResponse.<Map<String, Object>>builder()
+                                .success(false)
+                                .message("Sunucu hatası")
+                                .data(detail)
+                                .build()
+                );
     }
 }

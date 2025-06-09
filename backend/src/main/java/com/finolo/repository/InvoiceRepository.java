@@ -17,6 +17,7 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
     @Query("SELECT SUM(i.amount) FROM Invoice i WHERE i.user = :user")
     Optional<Double> sumAmountByUser(@Param("user") User user);
     List<Invoice> findTop5ByUserOrderByDateDesc(User user);
+    List<Invoice> findTop5ByUserOrderByCreatedAtDesc(User user);
     List<Invoice> findByUserAndDateAfter(User user, LocalDate date);
 
 
