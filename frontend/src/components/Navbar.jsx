@@ -1,11 +1,14 @@
 import {NavLink, useNavigate} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import {useEffect, useState} from "react";
+import {useTheme} from "../context/ThemeContext.jsx";
+import {Sun, Moon} from "lucide-react";
 
 function Navbar() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [menuOpen, setMenuOpen] = useState(false);
+    const { theme, toggleTheme } = useTheme();
 
     useEffect(() => {
         setMenuOpen(false); // rota değişince menü kapansın
@@ -13,11 +16,11 @@ function Navbar() {
 
     const linkClasses = ({ isActive }) =>
         isActive
-            ? "text-indigo-600 font-semibold"
-            : "text-gray-700 hover:text-indigo-600";
+            ? "text-indigo-600 dark:text-indigo-400 font-semibold"
+            : "text-gray-700 dark:text-gray-200 hover:text-indigo-600";
 
     return (
-        <nav className="bg-white border-b shadow-sm p-4 flex items-center justify-between relative z-50">
+        <nav className="bg-white dark:bg-gray-800 border-b dark:border-gray-700 shadow-sm p-4 flex items-center justify-between relative z-50">
             <div className="text-xl font-bold text-indigo-600 cursor-pointer" onClick={() => navigate("/dashboard")}>
                 Finolo
             </div>
@@ -38,7 +41,10 @@ function Navbar() {
             </div>
 
             <div className="hidden md:flex items-center gap-4">
-                <span className="text-sm text-gray-600">{user?.email}</span>
+                <button onClick={toggleTheme} className="text-xl">
+                    {theme === "dark" ? <Sun /> : <Moon />}
+                </button>
+                <span className="text-sm text-gray-600 dark:text-gray-300">{user?.email}</span>
                 <button
                     onClick={() => {
                         logout();
@@ -52,7 +58,7 @@ function Navbar() {
 
             {/* Hamburger */}
             <div className="md:hidden">
-                <button onClick={() => setMenuOpen(!menuOpen)} className="text-indigo-600 text-2xl">
+                <button onClick={() => setMenuOpen(!menuOpen)} className="text-indigo-600 dark:text-indigo-400 text-2xl">
                     ☰
                 </button>
             </div>
@@ -60,7 +66,7 @@ function Navbar() {
             {/* Mobil Menü */}
             <div
                 className={`
-          fixed top-0 left-0 w-full h-screen bg-white/90 backdrop-blur-md transition-transform duration-300 ease-in-out
+          fixed top-0 left-0 w-full h-screen bg-white/90 dark:bg-gray-900/90 backdrop-blur-md transition-transform duration-300 ease-in-out
           flex flex-col z-40 px-6 py-4
           ${menuOpen ? "translate-x-0" : "-translate-x-full"}
         `}
@@ -69,13 +75,13 @@ function Navbar() {
           <h2 className="text-xl font-bold text-indigo-600">Finolo</h2>
           <button
             onClick={() => setMenuOpen(false)}
-            className="text-2xl text-gray-700 hover:text-indigo-600"
+            className="text-2xl text-gray-700 dark:text-gray-200 hover:text-indigo-600"
           >
             ✕
           </button>
         </div>
 
-        <nav className="flex flex-col gap-4 text-lg text-gray-700">
+        <nav className="flex flex-col gap-4 text-lg text-gray-700 dark:text-gray-200">
           <NavLink to="/dashboard" className={linkClasses}>Dashboard</NavLink>
           {user?.role === "USER" && (
             <>
@@ -89,7 +95,11 @@ function Navbar() {
           <NavLink to="/profile" className={linkClasses}>Profil</NavLink>
         </nav>
 
-        <div className="mt-auto pt-6 border-t text-sm text-gray-600">
+        <div className="mt-auto pt-6 border-t text-sm text-gray-600 dark:text-gray-300">
+          <button onClick={toggleTheme} className="mb-4 flex items-center gap-2">
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            <span>Temayı Değiştir</span>
+          </button>
           <p className="mb-2">{user?.email}</p>
           <button
             onClick={() => {

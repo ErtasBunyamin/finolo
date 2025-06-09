@@ -64,7 +64,7 @@ function InvoiceForm() {
     };
 
     return (
-        <div className="max-w-2xl mx-auto mt-10 p-6 bg-white rounded shadow">
+        <div className="max-w-2xl mx-auto mt-10 p-6 bg-white dark:bg-gray-800 rounded shadow">
             <h2 className="text-2xl font-bold mb-6">Fatura Oluştur</h2>
             <form onSubmit={handleSubmit} className="space-y-5">
 
