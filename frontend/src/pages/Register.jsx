@@ -29,6 +29,7 @@ function Register() {
             login(data, data.token); // otomatik giriş
             navigate("/dashboard");
         } catch (err) {
+            console.error(err);
             setError("Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.");
         }
     };

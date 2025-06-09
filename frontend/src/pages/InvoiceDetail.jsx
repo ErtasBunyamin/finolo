@@ -29,6 +29,7 @@ function InvoiceDetail() {
                     setCustomers(customerData.data);
                 }
             } catch (err) {
+                console.error(err);
                 setError("Fatura detayları alınamadı.");
             }
         };
