@@ -28,7 +28,8 @@ function Register() {
             const data = await registerRequest(form);
             login(data, data.token); // otomatik giriş
             navigate("/dashboard");
-        } catch {
+        } catch (err) {
+            console.error(err);
             setError("Kayıt başarısız. Lütfen bilgilerinizi kontrol edin.");
         }
     };

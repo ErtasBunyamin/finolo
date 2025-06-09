@@ -23,7 +23,8 @@ function Login() {
             const data = await loginRequest(form);
             login(data, data.token);
             navigate("/dashboard");
-        } catch {
+        } catch (err) {
+            console.error(err);
             setError("Giriş başarısız. Lütfen bilgilerinizi kontrol edin.");
         }
     };

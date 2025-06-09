@@ -30,9 +30,9 @@ Finolo, küçük ve orta ölçekli işletmeler için geliştirilen modern, hızl
 
 ## 🚧 Yapılacaklar
 
-### Teknik
+-### Teknik
 - [ ] Rol bazlı yetkilendirme (ADMIN / USER)
-- [ ] Gelişmiş form validasyonları (zaman, tutar, email)
+- [x] Gelişmiş form validasyonları (zaman, tutar, email)
 - [ ] Export (PDF/Excel) özellikleri
 - [ ] Hata yönetimi için global logging sistemi
 - [ ] E-posta bildirim altyapısı (kayıt sonrası vs)

@@ -32,7 +32,8 @@ function Dashboard() {
 
                 const fetchPayments = await getPaymentStats();
                 if (fetchPayments.success) setPaymentStats(fetchPayments.data);
-            } catch {
+            } catch (err) {
+                console.error(err);
                 setError("Dashboard verileri alınamadı.");
             }
         };
