@@ -3,6 +3,7 @@ package com.finolo.service.auth;
 import com.finolo.dto.auth.RegisterRequest;
 import com.finolo.model.User;
 import com.finolo.repository.UserRepository;
+import com.finolo.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -25,6 +26,9 @@ class AuthServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private JwtService jwtService;
+
     @InjectMocks
     private AuthService authService;
 
@@ -44,6 +48,7 @@ class AuthServiceTest {
 
         when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("hashed-pass");
+        when(jwtService.generateToken(anyString())).thenReturn("token");
 
         var response = authService.register(request);
 
