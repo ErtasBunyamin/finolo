@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 class AuthServiceTest {
@@ -60,11 +61,9 @@ class AuthServiceTest {
 
         when(userRepository.existsByEmail("exists@example.com")).thenReturn(true);
 
-        try {
-            authService.register(request);
-        } catch (RuntimeException e) {
-            assertThat(e.getMessage()).isEqualTo("Bu e-posta zaten kayıtlı.");
-        }
+        RuntimeException exception = assertThrows(RuntimeException.class,
+                () -> authService.register(request));
+        assertThat(exception.getMessage()).isEqualTo("Bu e-posta zaten kayıtlı.");
 
         verify(userRepository, never()).save(any());
     }
