@@ -28,7 +28,7 @@ function InvoiceDetail() {
                 if (customerData.success) {
                     setCustomers(customerData.data);
                 }
-            } catch (err) {
+            } catch {
                 setError("Fatura detayları alınamadı.");
             }
         };
@@ -56,7 +56,7 @@ function InvoiceDetail() {
     if (!invoice) return <p className="text-center text-gray-500">Yükleniyor...</p>;
 
     return (
-        <div className="max-w-2xl mx-auto bg-white p-6 rounded shadow mt-6">
+        <div className="max-w-2xl mx-auto bg-white dark:bg-gray-800 p-6 rounded shadow mt-6">
             {/* Geri Butonu */}
             <button
                 onClick={() => navigate("/invoices")}
