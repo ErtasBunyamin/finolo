@@ -1,4 +1,5 @@
 import {useEffect, useState} from "react";
+import * as Yup from "yup";
 import {useNavigate} from "react-router-dom";
 import {getCustomers} from "../services/customerService";
 import {createInvoice} from "../services/invoiceService";
@@ -9,6 +10,7 @@ function InvoiceForm() {
     const [customers, setCustomers] = useState([]);
     const [error, setError] = useState("");
     const [showModal, setShowModal] = useState(false);
+    const [formErrors, setFormErrors] = useState({});
 
     const [formData, setFormData] = useState({
         amount: "",
@@ -20,6 +22,14 @@ function InvoiceForm() {
         taxRate: 0,
         note: "",
         paymentMethod: ""
+    });
+
+    const schema = Yup.object().shape({
+        amount: Yup.number().typeError("Tutar sayı olmalı").positive("Tutar pozitif olmalı").required("Tutar gerekli"),
+        date: Yup.date().required("Fatura tarihi gerekli"),
+        dueDate: Yup.date().nullable(),
+        description: Yup.string().required("Açıklama gerekli"),
+        customerId: Yup.string().required("Müşteri seçimi gerekli")
     });
 
     useEffect(() => {
@@ -49,17 +59,21 @@ function InvoiceForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!formData.customerId) {
-            alert("Lütfen bir müşteri seçin.");
-            return;
-        }
-
         try {
+            await schema.validate(formData, { abortEarly: false });
             await createInvoice(formData);
             navigate("/invoices");
         } catch (err) {
-            console.error(err);
-            setError("Fatura oluşturulamadı.");
+            if (err instanceof Yup.ValidationError) {
+                const validationErrors = {};
+                err.inner.forEach((e) => {
+                    if (e.path) validationErrors[e.path] = e.message;
+                });
+                setFormErrors(validationErrors);
+            } else {
+                console.error(err);
+                setError("Fatura oluşturulamadı.");
+            }
         }
     };
 
@@ -77,7 +91,11 @@ function InvoiceForm() {
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
                         required
+                        min="0"
                     />
+                    {formErrors.amount && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.amount}</p>
+                    )}
                 </div>
 
                 <div>
@@ -90,6 +108,9 @@ function InvoiceForm() {
                         className="w-full p-2 border rounded"
                         required
                     />
+                    {formErrors.date && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.date}</p>
+                    )}
                 </div>
 
                 <div>
@@ -101,6 +122,9 @@ function InvoiceForm() {
                         onChange={handleChange}
                         className="w-full p-2 border rounded"
                     />
+                    {formErrors.dueDate && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.dueDate}</p>
+                    )}
                 </div>
 
                 <div>
@@ -113,6 +137,9 @@ function InvoiceForm() {
                         className="w-full p-2 border rounded"
                         required
                     />
+                    {formErrors.description && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>
+                    )}
                 </div>
 
                 <div>
@@ -131,6 +158,9 @@ function InvoiceForm() {
                             </option>
                         ))}
                     </select>
+                    {formErrors.customerId && (
+                        <p className="text-red-500 text-sm mt-1">{formErrors.customerId}</p>
+                    )}
                 </div>
 
                 <div>
