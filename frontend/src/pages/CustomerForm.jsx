@@ -11,7 +11,9 @@ function CustomerForm() {
   const schema = Yup.object().shape({
     name: Yup.string().required("İsim gerekli"),
     email: Yup.string().email("Geçerli bir email girin").required("Email gerekli"),
-    phone: Yup.string().required("Telefon gerekli"),
+    phone: Yup.string()
+      .matches(/^\+?\d{10,15}$/, "Geçerli bir telefon numarası girin")
+      .required("Telefon gerekli"),
     address: Yup.string().required("Adres gerekli")
   });
 
