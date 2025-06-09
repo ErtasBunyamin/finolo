@@ -3,13 +3,34 @@ package com.finolo.exception;
 import com.finolo.dto.common.BaseResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-import java.time.LocalDateTime;
+    public ResponseEntity<BaseResponse<Map<String, String>>> handleValidationException(MethodArgumentNotValidException ex) {
+        logger.error("Validation error: {}", errors, ex);
+
+        return ResponseEntity.badRequest().body(
+                BaseResponse.<Map<String, String>>builder()
+                        .success(false)
+                        .message("Validasyon hatası")
+                        .data(errors)
+                        .build()
+        );
+    public ResponseEntity<BaseResponse<Void>> handleRuntime(RuntimeException ex) {
+        logger.error("Runtime exception: {}", ex.getMessage(), ex);
+                .body(BaseResponse.error(ex.getMessage()));
+    public ResponseEntity<BaseResponse<Map<String, Object>>> handleGeneral(Exception ex) {
+        logger.error("Unexpected error", ex);
+        Map<String, Object> detail = Map.of(
+                "timestamp", LocalDateTime.now(),
+                "detail", ex.getMessage()
+        );
+                .body(
+                        BaseResponse.<Map<String, Object>>builder()
+                                .success(false)
+                                .message("Sunucu hatası")
+                                .data(detail)
+                                .build()
+                );
 import java.util.HashMap;
 import java.util.Map;
 

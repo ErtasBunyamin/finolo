@@ -4,6 +4,9 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
 import CustomerForm from "./pages/CustomerForm.jsx";
+import AdminPanel from "./pages/AdminPanel.jsx";
+                    <Route path="/customers/new" element={<CustomerForm />} />
+                    <Route path="/admin" element={<AdminPanel />} />
 import Profile from "./pages/Profile";
 import PrivateRoute from "./routes/PrivateRoute";
 import Layout from "./components/Layout.jsx";

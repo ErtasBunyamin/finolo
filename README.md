@@ -25,6 +25,7 @@ Finolo, küçük ve orta ölçekli işletmeler için geliştirilen modern, hızl
 - [x] Müşteri ve fatura yönetimi ekranları
 - [x] Reusable bileşen yapısı (Cards, Charts, Modals)
 - [x] Mobil uyumlu tasarım
+- [x] İlk girişte açılan kısa yardım rehberi
 
 ---
 
@@ -67,6 +68,10 @@ cd frontend
 npm install
 npm run dev
 ```
+
+### Yardım Rehberi
+
+Uygulamaya ilk kez girdiğinizde kısa bir rehber görünür. Rehber kapatıldığında tarayıcınızda `tutorialShown` anahtarı kaydedilir. Tekrar görmek isterseniz bu anahtarı silmeniz yeterlidir.
 
 ---
 

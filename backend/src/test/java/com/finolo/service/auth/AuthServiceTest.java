@@ -4,6 +4,12 @@ import com.finolo.dto.auth.RegisterRequest;
 import com.finolo.model.User;
 import com.finolo.repository.UserRepository;
 import com.finolo.service.mail.MailService;
+    @Mock
+    private MailService mailService;
+
+        verify(mailService, times(1)).sendWelcomeMail("test@example.com");
+        verify(mailService, never()).sendWelcomeMail(any());
+        verify(jwtService, never()).generateToken(any());
 import com.finolo.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

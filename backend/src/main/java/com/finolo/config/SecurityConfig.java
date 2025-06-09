@@ -36,6 +36,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2-console/**", "/api/auth/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                        .requestMatchers("/api/invoices/**", "/api/customers/**", "/api/dashboard/**", "/api/user/**")
+                            .hasRole("USER")
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {

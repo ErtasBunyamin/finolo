@@ -34,9 +34,10 @@ function Dashboard() {
                 if (fetchPayments.success) setPaymentStats(fetchPayments.data);
             } catch (err) {
                 console.error(err);
-                setError("Dashboard verileri alınamadı.");
-            }
-        };
+            <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
+                            <tr key={inv.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-700">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow md:col-span-2">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
 
         fetchData();
     }, []);
