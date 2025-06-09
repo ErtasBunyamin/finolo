@@ -3,6 +3,8 @@ package com.finolo.service.auth;
 import com.finolo.dto.auth.RegisterRequest;
 import com.finolo.model.User;
 import com.finolo.repository.UserRepository;
+import com.finolo.service.mail.MailService;
+import com.finolo.security.JwtService;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -10,7 +12,6 @@ import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import com.finolo.security.JwtService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -25,6 +26,9 @@ class AuthServiceTest {
 
     @Mock
     private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private MailService mailService;
 
     @Mock
     private JwtService jwtService;
@@ -48,13 +52,14 @@ class AuthServiceTest {
 
         when(userRepository.existsByEmail("test@example.com")).thenReturn(false);
         when(passwordEncoder.encode("password123")).thenReturn("hashed-pass");
-        when(jwtService.generateToken("test@example.com")).thenReturn("token");
+        when(jwtService.generateToken(any())).thenReturn("jwt-token");
 
         var response = authService.register(request);
 
         assertThat(response.getEmail()).isEqualTo("test@example.com");
         assertThat(response.getRole()).isEqualTo("USER");
         verify(userRepository, times(1)).save(any(User.class));
+        verify(mailService, times(1)).sendWelcomeMail("test@example.com");
     }
 
     @Test
@@ -71,5 +76,7 @@ class AuthServiceTest {
         assertThat(exception.getMessage()).isEqualTo("Bu e-posta zaten kayıtlı.");
 
         verify(userRepository, never()).save(any());
+        verify(mailService, never()).sendWelcomeMail(any());
+        verify(jwtService, never()).generateToken(any());
     }
 }

@@ -35,10 +35,10 @@ function Register() {
     };
 
     return (
-        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 px-4">
+        <div className="min-h-screen flex flex-col justify-center items-center bg-gray-100 dark:bg-gray-900 px-4">
             <img src={finoloLogo} alt="Finolo Logo" className="w-32 mb-6" />
 
-            <div className="w-full max-w-md bg-white p-6 rounded shadow">
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded shadow">
                 <h2 className="text-xl font-semibold text-center text-indigo-600 mb-4">Kayıt Ol</h2>
 
                 <form onSubmit={handleSubmit} className="space-y-4">

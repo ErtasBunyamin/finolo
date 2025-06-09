@@ -56,7 +56,7 @@ function Dashboard() {
             )}
 
             {/* Son 5 Fatura */}
-            <div className="bg-white p-4 rounded shadow">
+            <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
                 <h2 className="text-lg font-semibold text-indigo-600 mb-4">Son Faturalar</h2>
                 {recentInvoices.length > 0 ? (
                     <table className="w-full text-sm">
@@ -71,7 +71,7 @@ function Dashboard() {
                         </thead>
                         <tbody>
                         {recentInvoices.map((inv) => (
-                            <tr key={inv.id} className="border-b hover:bg-gray-50">
+                            <tr key={inv.id} className="border-b hover:bg-gray-50 dark:hover:bg-gray-700">
                                 <td>{inv.invoiceNumber}</td>
                                 <td>{inv.customerName}</td>
                                 <td>{inv.date}</td>
@@ -88,12 +88,12 @@ function Dashboard() {
 
             {/* Grafik ve Tahsilat */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-white p-4 rounded shadow md:col-span-2">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow md:col-span-2">
                     <h2 className="text-lg font-semibold text-indigo-600 mb-4">Aylık Fatura Gelirleri</h2>
                     <MonthlyBarChart data={monthlyStats} />
                 </div>
 
-                <div className="bg-white p-4 rounded shadow">
+                <div className="bg-white dark:bg-gray-800 p-4 rounded shadow">
                     <h2 className="text-lg font-semibold text-indigo-600 mb-4">Tahsilat Durumu</h2>
                     <PaymentDonutChart data={paymentStats} />
                 </div>

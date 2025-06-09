@@ -10,6 +10,7 @@ import Layout from "./components/Layout.jsx";
 import Invoices from "./pages/Invoices.jsx";
 import InvoiceForm from "./pages/InvoiceForm.jsx";
 import InvoiceDetail from "./pages/InvoiceDetail";
+import AdminPanel from "./pages/AdminPanel.jsx";
 
 function App() {
     return (
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/invoices" element={<Invoices />} />
                     <Route path="/invoices/:id" element={<InvoiceDetail />} />
                     <Route path="/invoice/new" element={<InvoiceForm />} />
+                    <Route path="/admin" element={<AdminPanel />} />
                 </Route>
             </Routes>
         </Router>

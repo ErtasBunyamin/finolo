@@ -41,7 +41,7 @@ function CustomerForm() {
   };
 
   return (
-    <div className="p-4 max-w-xl mx-auto">
+    <div className="p-4 max-w-xl mx-auto bg-white dark:bg-gray-800 rounded shadow">
       <h2 className="text-2xl font-bold mb-4">Yeni Müşteri</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
