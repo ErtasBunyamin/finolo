@@ -25,7 +25,15 @@ function Navbar() {
             {/* Masaüstü Menü */}
             <div className="hidden md:flex gap-6 items-center">
                 <NavLink to="/dashboard" className={linkClasses}>Dashboard</NavLink>
-                <NavLink to="/customers" className={linkClasses}>Müşteriler</NavLink>
+                {user?.role === "USER" && (
+                    <>
+                        <NavLink to="/customers" className={linkClasses}>Müşteriler</NavLink>
+                        <NavLink to="/invoices" className={linkClasses}>Faturalar</NavLink>
+                    </>
+                )}
+                {user?.role === "ADMIN" && (
+                    <NavLink to="/admin" className={linkClasses}>Admin</NavLink>
+                )}
                 <NavLink to="/profile" className={linkClasses}>Profil</NavLink>
             </div>
 
@@ -69,9 +77,16 @@ function Navbar() {
 
         <nav className="flex flex-col gap-4 text-lg text-gray-700">
           <NavLink to="/dashboard" className={linkClasses}>Dashboard</NavLink>
-          <NavLink to="/customers" className={linkClasses}>Müşteriler</NavLink>
-            <NavLink to="/invoices" className={linkClasses}>Faturalar</NavLink>
-            <NavLink to="/profile" className={linkClasses}>Profil</NavLink>
+          {user?.role === "USER" && (
+            <>
+              <NavLink to="/customers" className={linkClasses}>Müşteriler</NavLink>
+              <NavLink to="/invoices" className={linkClasses}>Faturalar</NavLink>
+            </>
+          )}
+          {user?.role === "ADMIN" && (
+            <NavLink to="/admin" className={linkClasses}>Admin</NavLink>
+          )}
+          <NavLink to="/profile" className={linkClasses}>Profil</NavLink>
         </nav>
 
         <div className="mt-auto pt-6 border-t text-sm text-gray-600">
