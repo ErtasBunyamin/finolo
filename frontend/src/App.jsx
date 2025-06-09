@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import Customers from "./pages/Customers";
 import CustomerForm from "./pages/CustomerForm.jsx";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 import PrivateRoute from "./routes/PrivateRoute";
 import Layout from "./components/Layout.jsx";
 import Invoices from "./pages/Invoices.jsx";
@@ -26,6 +27,7 @@ function App() {
                     <Route path="/customers" element={<Customers />} />
                     <Route path="/customers/new" element={<CustomerForm />} />
                     <Route path="/profile" element={<Profile />} />
+                    <Route path="/settings" element={<Settings />} />
                     <Route path="/invoices" element={<Invoices />} />
                     <Route path="/invoices/:id" element={<InvoiceDetail />} />
                     <Route path="/invoice/new" element={<InvoiceForm />} />
