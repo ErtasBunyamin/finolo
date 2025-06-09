@@ -89,8 +89,8 @@ class InvoiceControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invoiceRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.invoiceNumber").value("INV-TEST-123456"))
-                .andExpect(jsonPath("$.amount").value(2500.0));
+                .andExpect(jsonPath("$.data.invoiceNumber").value("INV-TEST-123456"))
+                .andExpect(jsonPath("$.data.amount").value(2500.0));
     }
 
     @Test
@@ -100,8 +100,8 @@ class InvoiceControllerTest {
 
         mockMvc.perform(get("/api/invoices"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].invoiceNumber").value("INV-TEST-123456"))
-                .andExpect(jsonPath("$[0].amount").value(2500.0))
-                .andExpect(jsonPath("$[0].status").value("DRAFT"));
+                .andExpect(jsonPath("$.data[0].invoiceNumber").value("INV-TEST-123456"))
+                .andExpect(jsonPath("$.data[0].amount").value(2500.0))
+                .andExpect(jsonPath("$.data[0].status").value("DRAFT"));
     }
 }
