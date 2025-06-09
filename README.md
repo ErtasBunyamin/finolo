@@ -55,9 +55,13 @@ cd finolo
 
 ### Backend
 
+Backend'i çalıştırabilmek için sisteminizde Maven kurulu olmalıdır. Maven
+yüklü değilse [maven.apache.org](https://maven.apache.org/install.html)
+adresindeki adımları izleyebilirsiniz.
+
 ```bash
 cd backend
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
 ### Frontend
