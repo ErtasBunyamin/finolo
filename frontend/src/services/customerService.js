@@ -6,6 +6,12 @@ export const getCustomers = async () => {
 };
 
 export const createCustomer = async (data) => {
-    const res = await API.post("/customers", data);
+    const payload = {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address,
+    };
+    const res = await API.post("/customers", payload);
     return res.data;
 };
