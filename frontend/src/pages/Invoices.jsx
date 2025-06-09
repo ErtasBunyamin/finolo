@@ -35,8 +35,9 @@ function Invoices() {
         }
     };
 
-    const downloadFile = (data, filename) => {
-        const url = window.URL.createObjectURL(new Blob([data]));
+    const downloadFile = (data, filename, type) => {
+        const blob = data instanceof Blob ? data : new Blob([data], { type });
+        const url = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = url;
         link.setAttribute("download", filename);
@@ -48,7 +49,7 @@ function Invoices() {
     const handleExportPdf = async () => {
         try {
             const res = await exportInvoicesPdf();
-            downloadFile(res.data, "invoices.pdf");
+            downloadFile(res.data, "invoices.pdf", "application/pdf");
         } catch (err) {
             console.error("PDF indirilemedi", err);
         }
@@ -57,7 +58,7 @@ function Invoices() {
     const handleExportExcel = async () => {
         try {
             const res = await exportInvoicesExcel();
-            downloadFile(res.data, "invoices.xlsx");
+            downloadFile(res.data, "invoices.xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
         } catch (err) {
             console.error("Excel indirilemedi", err);
         }
