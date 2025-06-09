@@ -1,4 +1,4 @@
-import {NavLink, useNavigate} from "react-router-dom";
+import {NavLink, useNavigate, useLocation} from "react-router-dom";
 import {useAuth} from "../context/AuthContext";
 import {useEffect, useState} from "react";
 import {useTheme} from "../context/ThemeContext.jsx";
@@ -7,6 +7,7 @@ import {Sun, Moon} from "lucide-react";
 function Navbar() {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
     const [menuOpen, setMenuOpen] = useState(false);
     const { theme, toggleTheme } = useTheme();
 
